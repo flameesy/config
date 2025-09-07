@@ -1,7 +1,7 @@
-#Emacs Config
+# Emacs Config
 
 restart after first install routine finished to ensure proper startup of all plugins
 
-##for LISP
+## for LISP
 
 M-x package-install sly
