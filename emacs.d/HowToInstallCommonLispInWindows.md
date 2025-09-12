@@ -22,9 +22,9 @@ curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp`
 
 `sbcl --eval '(ql:quickload :clog/tools)' `
 
-## Starten vom CLOG Builder
+## Starten vom CLOG Builder im REPL
 
-`sbcl --eval '(clog-tools:clog-builder)'`
+`(clog-tools:clog-builder)`
 
 ## Default Locations
 
@@ -56,5 +56,6 @@ Danach Extension aus dem Marketplace installieren. ALIVE startet sich sobald ein
 - und in die early-init.el diesen Code hinterlegen:
   - `(load (expand-file-name "~/quicklisp/slime-helper.el"))
      (setq inferior-lisp-program "sbcl")`
+
 
 Danach `M-x package-install  <RET> sly` und alles ist erledigt um erfolgreich zu entwickeln! 
