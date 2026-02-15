@@ -77,7 +77,7 @@
            ("?" . dashboard-hydra/body))
     :hook (dashboard-mode . (lambda () (setq-local frame-title-format nil)))
     :init
-    (setq dashboard-banner-logo-title "CENTAUR EMACS - Enjoy Programming & Writing"
+    (setq dashboard-banner-logo-title "Enjoy Code."
           dashboard-startup-banner (or centaur-logo 'official)
           dashboard-page-separator "\n\f\n"
           dashboard-projects-backend 'project-el
@@ -131,12 +131,7 @@
                    (nerd-icons-mdicon "nf-md-help" :height 1.2)
                  "?")
               "" "Help (?/h)"
-              (lambda (&rest _) (dashboard-hydra/body)))))
-
-          dashboard-footer-icon
-          (if (icons-displayable-p)
-              (nerd-icons-octicon "nf-oct-heart" :height 1.2 :face 'nerd-icons-lred)
-            (propertize ">" 'face 'dashboard-footer)))
+              (lambda (&rest _) (dashboard-hydra/body))))))
 
     (dashboard-setup-startup-hook)
     :config
