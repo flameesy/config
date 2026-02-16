@@ -1,7 +1,5 @@
-;;; Emacs Bedrock
+;;; org.el --- Org mode setup  -*- lexical-binding: t; -*-
 ;;;
-;;; Extra config: Org-mode starter config
-
 ;;; Usage: Append or require this file from init.el for some software
 ;;; development-focused packages.
 ;;;

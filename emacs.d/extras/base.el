@@ -1,9 +1,4 @@
-;;; Emacs Bedrock
-;;;
-;;; Extra config: Base enhancements
-
-;;; Usage: Append or require this file from init.el to enable various UI/UX
-;;; enhancements.
+;;; base.el --- Base configuration  -*- lexical-binding: t; -*-
 ;;;
 ;;; The consult package in particular has a vast number of functions that you
 ;;; can use as replacements to what Emacs provides by default. Please see the
@@ -14,7 +9,7 @@
 ;;; In particular, many users may find `consult-line' to be more useful to them
 ;;; than isearch, so binding this to `C-s' might make sense. This is left to the
 ;;; user to configure, however, as isearch and consult-line are not equivalent.
-
+;;;
 ;;; Contents:
 ;;;
 ;;;  - Motion aids
@@ -77,7 +72,7 @@
   :bind (("C-c a" . embark-act))        ; bind this to an easy key to hit
   :init
   ;; Add the option to run embark when using avy
-  (defun bedrock/avy-action-embark (pt)
+  (defun knoglerdev/avy-action-embark (pt)
     (unwind-protect
         (save-excursion
           (goto-char pt)
@@ -88,7 +83,7 @@
 
   ;; After invoking avy-goto-char-timer, hit "." to run embark at the next
   ;; candidate you select
-  (setf (alist-get ?. avy-dispatch-alist) 'bedrock/avy-action-embark))
+  (setf (alist-get ?. avy-dispatch-alist) 'knoglerdev/avy-action-embark))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -162,11 +157,11 @@
 
 (use-package eshell
   :init
-  (defun bedrock/setup-eshell ()
+  (defun knoglerdev/setup-eshell ()
     ;; Something funny is going on with how Eshell sets up its keymaps; this is
     ;; a work-around to make C-r bound in the keymap
     (keymap-set eshell-mode-map "C-r" 'consult-history))
-  :hook ((eshell-mode . bedrock/setup-eshell)))
+  :hook ((eshell-mode . knoglerdev/setup-eshell)))
 
 ;; Eat: Emulate A Terminal
 (use-package eat

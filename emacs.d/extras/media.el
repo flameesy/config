@@ -1,9 +1,7 @@
-;;; Extra config: Media player (EMMS)
-
+;;; media.el --- Media setup -*- lexical-binding: t; -*-
+;;;
 ;;; Prerequisites:
 ;;;   - mpv or vlc (recommended: mpv)
-;;;   - Windows: Download mpv from https://mpv.io/installation/
-;;;   - Linux: sudo apt install mpv (or vlc)
 ;;;
 ;;; Quick start:
 ;;;   M-x emms-add-directory-tree RET ~/Music RET

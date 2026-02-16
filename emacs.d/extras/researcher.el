@@ -1,7 +1,5 @@
-;;; Emacs Bedrock
+;;; researcher.el --- Research setup -*- lexical-binding: t; -*-
 ;;;
-;;; Extra config: Researcher
-
 ;;; Usage: Append or require this file from init.el for research
 ;;; helps. If you write papers in LaTeX and need to manage your
 ;;; citations or keep track of notes, this set of packages is for you.

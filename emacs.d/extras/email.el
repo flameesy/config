@@ -1,10 +1,7 @@
-;;; Emacs Bedrock
+;;; email.el --- Email Setup -*- lexical-binding: t; -*-
 ;;;
-;;; Extra config: Email
-
-;;; Usage: Append or require this file from init.el for Email in Emacs. You will
-;;; need to do some heavy customization depending on your email provider.
-
+;;; You will need to do some heavy customization depending on your email provider.
+;;;
 ;;; Contents:
 ;;;
 ;;;  - Core Email Packages

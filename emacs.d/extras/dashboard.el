@@ -1,9 +1,5 @@
-;;; Emacs Bedrock
+;;; dashboard.el --- Dashboard  -*- lexical-binding: t; -*-
 ;;;
-;;; Extra config: Dashboard
-
-;;; Usage: Append or require this file from init.el to get a nice startup dashboard
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Dashboard

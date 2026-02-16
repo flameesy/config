@@ -1,3 +1,5 @@
+;;; init.el --- Initial stuff -*- lexical-binding: t; -*-
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Basic settings
@@ -12,7 +14,7 @@
  (with-eval-after-load 'package
    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-;; If you want to turn off the welcome screen, uncomment this
+;; Turn off Welcome Screen
 ;(setopt inhibit-splash-screen t)
 
 (setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
@@ -20,8 +22,6 @@
 
 ;; Automatically reread from disk if the underlying file changes
 (setopt auto-revert-avoid-polling t)
-;; Some systems don't do file notifications well; see
-;; https://todo.sr.ht/~ashton314/emacs-bedrock/11
 (setopt auto-revert-interval 5)
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode)
@@ -41,7 +41,7 @@
 
 ;; Don't litter file system with *~ backup files; put them all inside
 ;; ~/.emacs.d/backup or wherever
-(defun bedrock--backup-file-name (fpath)
+(defun knoglerdev--backup-file-name (fpath)
   "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
   (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
@@ -49,7 +49,7 @@ If the new path's directories does not exist, create them."
          (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
     (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
     backupFilePath))
-(setopt make-backup-file-name-function 'bedrock--backup-file-name)
+(setopt make-backup-file-name-function 'knoglerdev--backup-file-name)
 
 ;; The above creates nested directories in the backup folder. If
 ;; instead you would like all backup files in a flat structure, albeit
@@ -233,4 +233,4 @@ If the new path's directories does not exist, create them."
  ;; If there is more than one, they won't work right.
  )
 
-(setq gc-cons-threshold (or bedrock--initial-gc-threshold 800000))
+(setq gc-cons-threshold (or knoglerdev--initial-gc-threshold 800000))
