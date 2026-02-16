@@ -177,8 +177,25 @@ If the new path's directories does not exist, create them."
 
 ;; Add Theme Path 
 (add-to-list 'custom-theme-load-path (expand-file-name "themes/" user-emacs-directory))
-;; Current Theme
+;; Possible Themes without ef-themes
 (load-theme 'nord t)
+
+;; ef-themes package (its worth it, if you want more choices)
+; (use-package ef-themes
+  ; :ensure t
+  ; :init
+  ; (ef-themes-take-over-modus-themes-mode 1)
+  ; :bind
+  ; (("<f5>" . modus-themes-rotate)
+   ; ("C-<f5>" . modus-themes-select)
+   ; ("M-<f5>" . modus-themes-load-random))
+  ; :config
+  ; ;; All customisations here.
+  ; (setq modus-themes-mixed-fonts t)
+  ; (setq modus-themes-italic-constructs t)
+
+  ; ;; Finally, load your theme of choice
+  ; (modus-themes-load-theme 'ef-kassio))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
