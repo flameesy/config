@@ -210,3 +210,15 @@ If the new path's directories does not exist, create them."
 (load-file (expand-file-name "extras/media.el" user-emacs-directory))
 
 (setq gc-cons-threshold (or knoglerdev--initial-gc-threshold 800000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
