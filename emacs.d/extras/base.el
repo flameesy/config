@@ -20,6 +20,7 @@
 ;;;  - Motion aids
 ;;;  - Power-ups: Embark and Consult
 ;;;  - Minibuffer and completion
+;;;  - Treemacs
 ;;;  - Misc. editing enhancements
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -181,6 +182,56 @@
   :ensure t
   :config
   (setq completion-styles '(orderless)))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Treemacs: File explorer sidebar
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Icons for treemacs (load first)
+(use-package nerd-icons
+  :ensure t
+  :if (display-graphic-p))
+
+;; Treemacs: VSCode-like file tree
+(use-package treemacs
+  :ensure t
+  :defer t
+  :config
+  ;; Basic settings
+  (setq treemacs-width 35
+        treemacs-follow-after-init t
+        treemacs-is-never-other-window t
+        treemacs-sorting 'alphabetic-asc
+        treemacs-show-hidden-files t)
+  
+  ;; Enable modes
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
+  (treemacs-fringe-indicator-mode t)
+  (treemacs-git-mode 'simple)
+  
+  :bind
+  (("<f8>" . treemacs)
+   ("C-x t t" . treemacs)))
+
+;; Icons theme for treemacs
+(use-package treemacs-nerd-icons
+  :ensure t
+  :after treemacs
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
+;; Optional: Project.el integration
+(use-package treemacs-projectile
+  :ensure t
+  :after (treemacs projectile))
+
+;; Optional: Magit integration (for git status colors)
+(use-package treemacs-magit
+  :ensure t
+  :after (treemacs magit))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
