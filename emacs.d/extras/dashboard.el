@@ -19,7 +19,9 @@
   (setq dashboard-banner-logo-title "Enjoi.")
   
   ;; Set the banner
-  (setq dashboard-startup-banner 'logo)
+  ;(setq dashboard-startup-banner 'logo)
+  (setq dashboard-startup-banner 
+	(cons (concat user-emacs-directory "extras/logo.png") (concat user-emacs-directory "extras/logo.txt")))
   
   ;; Center content
   (setq dashboard-center-content t)

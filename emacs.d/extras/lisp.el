@@ -9,11 +9,11 @@
 ;; - M-,: Pop back from definition
 ;; - C-c C-d h: Hyperspec lookup
 
-;;; Code:
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLY - Superior Lisp Interaction Mode for Emacs
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package sly
   :ensure t
@@ -46,9 +46,11 @@
               ("C-c C-d C-d" . sly-describe-symbol)
               ("C-c C-d h" . sly-hyperspec-lookup)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLY Extensions
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; SLY-ASDF: ASDF system integration
 (use-package sly-asdf
@@ -73,9 +75,11 @@
   :config
   (push 'sly-repl-ansi-color sly-contribs))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Paredit - Structured editing for Lisp
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package paredit
   :ensure t
@@ -94,9 +98,11 @@
               ("M-[" . paredit-wrap-square)
               ("M-{" . paredit-wrap-curly)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Highlight-Parentheses - Additional visual aid
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package highlight-parentheses
   :ensure t
@@ -106,9 +112,11 @@
   :custom
   (highlight-parentheses-colors '("red" "green" "yellow" "cyan" "magenta")))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Aggressive Indent - Auto-indentation
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (use-package aggressive-indent
   :ensure t
@@ -119,32 +127,31 @@
   ;; Don't indent when typing in comments
   (aggressive-indent-comments-too nil))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Company integration for SLY (company-mode)
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; If you have company-mode configured elsewhere, this adds SLY completion
 (with-eval-after-load 'company
   (add-hook 'sly-mode-hook 'company-mode))
-  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
 ;;;
 ;;; Eldoc - Show function signatures in minibuffer
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Already built-in to Emacs, just ensure it's enabled for Lisp modes
 (add-hook 'lisp-mode-hook #'eldoc-mode)
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
-;;;
-;;; Project integration
-;;;
-
-;; SLY automatically integrates with project.el
-;; When you M-x sly in a project directory, it creates a project-specific REPL
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Additional helpful settings
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Show matching parenthesis
 (show-paren-mode 1)
@@ -168,9 +175,11 @@
   (when (fboundp 'company-mode)
     (add-hook 'sly-mrepl-mode-hook #'company-mode)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Custom functions for Common Lisp workflow
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun my/sly-eval-buffer ()
   "Evaluate the entire buffer in SLY."
@@ -188,9 +197,11 @@
   (define-key sly-mode-map (kbd "C-c C-b") 'my/sly-eval-buffer)
   (define-key sly-mode-map (kbd "C-c C-l") 'my/sly-load-project))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Package system helpers
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Quick function to define a package at the top of a file
 (defun my/insert-package-definition ()
@@ -203,9 +214,11 @@
 
 (global-set-key (kbd "C-c l p") 'my/insert-package-definition)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Documentation
 ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Quick reference for keybindings
 ;; Add to your help menu with:
@@ -253,4 +266,3 @@
     (princ "  M-x sly-restart-inferior-lisp  Restart Lisp\n")))
 
 (provide 'lisp)
-;;; lisp.el ends here

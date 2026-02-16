@@ -154,4 +154,3 @@
     (princ "  - Optional: LSP features with Eglot\n")))
 
 (provide 'web)
-;;; web.el ends here
