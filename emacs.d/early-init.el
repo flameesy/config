@@ -19,9 +19,9 @@
 (tool-bar-mode -1)                      ; All these tools are in the menu-bar anyway
 (setq default-frame-alist '((fullscreen . maximized)
 
-                            ;; You can turn off scroll bars by uncommenting these lines:
-                            ;; (vertical-scroll-bars . nil)
-                            ;; (horizontal-scroll-bars . nil)
+                            ;; Turn scroll bars on/off:
+                             (vertical-scroll-bars . nil)
+                             (horizontal-scroll-bars . nil)
 
                             ;; Setting the face in here prevents flashes of
                             ;; color as the theme gets activated
@@ -33,4 +33,3 @@
 ;; Disable UI elements early
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
