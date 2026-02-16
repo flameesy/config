@@ -76,6 +76,10 @@ If the new path's directories does not exist, create them."
   :config
   (which-key-mode))
 
+;; rg: better ripgrep integration
+(use-package rg
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Minibuffer/completion settings
