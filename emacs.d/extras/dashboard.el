@@ -20,7 +20,7 @@
   :after (nerd-icons)  ; Load after nerd-icons
   :init
   ;; Set the title
-  (setq dashboard-banner-logo-title "Welcome to Emacs - Happy Hacking!")
+  (setq dashboard-banner-logo-title "Enjoi.")
   
   ;; Set the banner
   (setq dashboard-startup-banner 'logo)
@@ -50,9 +50,7 @@
 
   ;; Footer
   (setq dashboard-footer-messages 
-        '("Happy hacking!" 
-          "Emacs ❤️ Common Lisp"
-          "Let's build something great!"))
+        '("pluh"))
 
   ;; Projects backend
   (setq dashboard-projects-backend 'project-el)
@@ -62,14 +60,6 @@
   (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
 
   :config
-  ;; Footer icon (now nerd-icons is loaded)
-  (setq dashboard-footer-icon 
-        (if (display-graphic-p)
-            (nerd-icons-faicon "nf-fa-heart"
-                               :height 1.1
-                               :v-adjust -0.05
-                               :face 'error)
-          ""))
   
   ;; Navigator buttons (now nerd-icons is loaded)
   (setq dashboard-navigator-buttons

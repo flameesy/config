@@ -1,9 +1,6 @@
 ;;; Emacs Bedrock
 ;;;
 ;;; Extra config: Development tools
-
-;;; Usage: Append or require this file from init.el for some software
-;;; development-focused packages.
 ;;;
 ;;; It is **STRONGLY** recommended that you use the base.el config if you want to
 ;;; use Eglot. Lots of completion things will work better.
@@ -21,6 +18,9 @@
 ;;;  - Common file types
 ;;;  - Eglot, the built-in LSP client for Emacs
 ;;;  - Templating
+;;;  - Rainbow delimiters
+;;;  - Todo highlighting
+;;;  - Language-specific packages
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -78,10 +78,6 @@
 (use-package json-mode
   :ensure t)
 
-;; Emacs ships with a lot of popular programming language modes. If it's not
-;; built in, you're almost certain to find a mode for the language you're
-;; looking for with a quick Internet search.
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Eglot, the built-in LSP client for Emacs
@@ -89,7 +85,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Helpful resources:
-;;
 ;;  - https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
 
 (use-package eglot
@@ -140,3 +135,41 @@
   ;; writing prose.
   (add-hook 'prog-mode-hook 'tempel-setup-capf)
   (add-hook 'text-mode-hook 'tempel-setup-capf))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; HL-TODO - Highlight TODO/FIXME/etc in comments
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package hl-todo
+  :ensure t
+  :hook (prog-mode . hl-todo-mode)  ; Aktiviert für ALLE Programming-Modes
+  :custom
+  (hl-todo-keyword-faces
+   '(("TODO"   . "#FF0000")
+     ("FIXME"  . "#FF0000")
+     ("DEBUG"  . "#A020F0")
+     ("GOTCHA" . "#FF4500")
+     ("STUB"   . "#1E90FF")
+     ("NOTE"   . "#008000")
+     ("OPTIMIZE" . "#00CED1"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	 
+;;;
+;;; Rainbow Delimiters - Color-code nested parentheses
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))  ; Für alle Programming-Modes
+		 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Language-specific Packages for software development
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Common Lisp
+(load-file (expand-file-name "extras/lisp.el" user-emacs-directory))
