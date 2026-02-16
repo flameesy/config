@@ -17,13 +17,13 @@
 
 ;; Function to setup the workspace layout
 (defun knoglerdev-setup-workspace ()
-  "Setup workspace: treemacs left, dashboard top, help bar bottom (6 lines)."
+  "Setup workspace: treemacs + emms left, dashboard top, help bar bottom (6 lines)."
   (interactive)
   
   ;; Start clean
   (delete-other-windows)
   
-  ;; Open treemacs on the left if available
+  ;; === LEFT SIDE: Treemacs + EMMS ===
   (when (fboundp 'treemacs)
     (condition-case nil
         (progn
@@ -34,9 +34,22 @@
              knoglerdev-default-dev-directory
              (file-name-nondirectory (directory-file-name knoglerdev-default-dev-directory)))))
       (error nil))
+    
+    ;; If EMMS is loaded, show it below treemacs
+    (when (and (featurep 'emms) (get-buffer "*EMMS Playlist*"))
+      (let ((treemacs-window (selected-window)))
+        ;; Split treemacs window vertically (bottom for EMMS)
+        (let ((emms-window (split-window-below -10)))  ; 10 lines for EMMS
+          (select-window emms-window)
+          (switch-to-buffer "*EMMS Playlist*")
+          ;; Make sure EMMS window is exactly 10 lines
+          (window-resize emms-window (- 10 (window-height emms-window)))
+          ;; Return to treemacs window, then move to main area
+          (select-window treemacs-window))))
+    
     (other-window 1))
   
-  ;; Split main area: top (dashboard) and bottom (help)
+  ;; === RIGHT SIDE: Dashboard + Help ===
   (let ((main-window (selected-window)))
     
     ;; Show dashboard in main window
