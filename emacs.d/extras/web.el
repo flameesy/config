@@ -1,156 +1,325 @@
-;;; web.el --- Web development additions  -*- lexical-binding: t; -*-
-;;;
-;;; Additions to dev.el for web development:
-;;; - TypeScript/JavaScript modes
-;;; - Web-mode for HTML/CSS/JSX
-;;; - Emmet for HTML abbreviations
-;;; - Tree-sitter integration
-;;;
-;;; REQUIREMENTS (optional - only if you want LSP features):
-;;; Tree-sitter grammars (one-time setup):
-;;;   M-x treesit-install-language-grammar RET typescript RET
-;;;   M-x treesit-install-language-grammar RET tsx RET
-;;;   M-x treesit-install-language-grammar RET javascript RET
-;;;
-;;; TypeScript Language Server (only if you want IDE features):
-;;;   npm install -g typescript-language-server typescript
-;;;   (or use Deno/Bun which have built-in TypeScript support)
+;;;; web.el --- Modern React/TypeScript development setup -*- lexical-binding: t; -*-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Web-Mode - For HTML/CSS/JS mixed files
+;;; Setup Instructions
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode)
-         ("\\.css\\'" . web-mode)
-         ("\\.jsx?\\'" . web-mode)  ; Can use web-mode for JSX too
-         ("\\.tsx?\\'" . web-mode)  ; Or for TSX
-         ("\\.vue\\'" . web-mode)
-         ("\\.svelte\\'" . web-mode))
-  :custom
-  (web-mode-markup-indent-offset 2)
-  (web-mode-css-indent-offset 2)
-  (web-mode-code-indent-offset 2)
-  (web-mode-enable-auto-pairing t)
-  (web-mode-enable-auto-closing t)
-  (web-mode-enable-current-element-highlight t))
+;; STEP 1: Install Tree-sitter grammars
+;;   Run: M-x web-setup-install-grammars
+;;   This downloads and compiles the parsers for TypeScript, TSX, JSON, etc.
+;;
+;; STEP 2: Install LSP servers
+;;   Run: M-x lsp-install-server
+;;   Select: ts-ls (TypeScript)
+;;   Run again for: eslint
+;;   Run again for: tailwindcss (optional, for Tailwind projects)
+;;
+;; STEP 3: (Optional but HIGHLY recommended) Install emacs-lsp-booster
+;;   This dramatically improves LSP performance by handling JSON parsing async.
+;;   Install from: https://github.com/blahgeek/emacs-lsp-booster
+;;   
+;;   On Linux:
+;;     cargo install --git https://github.com/blahgeek/emacs-lsp-booster
+;;   
+;;   On Windows:
+;;     Download binary from releases page
+;;   
+;;   Ensure 'emacs-lsp-booster' is in your PATH
+;;
+;; STEP 4: Install Prettier (for code formatting)
+;;   npm install -g prettier
+;;   Or use project-local prettier (recommended)
+;;
+;; STEP 5: Check LSP health
+;;   Run: M-x lsp-doctor
+;;   Should show all OK - if not, follow the suggestions
+;;
+;; USAGE:
+;;   - Open any .ts, .tsx, .js, or .jsx file
+;;   - LSP will auto-start and offer to download servers if missing
+;;   - C-c l = LSP command prefix
+;;   - C-c C-d = Show documentation for symbol at point
+;;   - C-c o = Combobulate prefix (structural editing)
+;;   - M-n / M-p = Next/previous error
+;;   - Files auto-format with Prettier on save
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tree-Sitter Support
+;;; Treesitter for TypeScript & React (TSX)
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Tree-sitter is configured in dev.el via major-mode-remap-alist
-;; Just install the grammars once (one-time setup):
-;;   M-x treesit-install-language-grammar RET typescript RET
-;;   M-x treesit-install-language-grammar RET tsx RET
-;;   M-x treesit-install-language-grammar RET javascript RET
-
-;; Indentation settings for TypeScript/JavaScript
-(setq typescript-ts-mode-indent-offset 2
-      js-indent-level 2)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Eglot TS Integration (optional - only if you installed the language server
-;;;                                          (and actually need TypeScript))
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-(with-eval-after-load 'eglot
-  ;; (add-hook 'typescript-ts-mode-hook #'eglot-ensure)
-  ;; (add-hook 'tsx-ts-mode-hook #'eglot-ensure)
-  ;; (add-hook 'js-ts-mode-hook #'eglot-ensure)
+(use-package treesit
+  :mode (("\\.tsx\\'" . tsx-ts-mode)
+         ("\\.ts\\'" . typescript-ts-mode)
+         ("\\.js\\'" . typescript-ts-mode)
+         ("\\.jsx\\'" . tsx-ts-mode)
+         ("\\.mjs\\'" . typescript-ts-mode)
+         ("\\.mts\\'" . typescript-ts-mode)
+         ("\\.cjs\\'" . typescript-ts-mode)
+         ("\\.json\\'" . json-ts-mode))
+  :preface
+  (defun web-setup-install-grammars ()
+    "Install Tree-sitter grammars if absent."
+    (interactive)
+    (dolist (grammar
+             '((css . ("https://github.com/tree-sitter/tree-sitter-css" "v0.20.0"))
+               (bash "https://github.com/tree-sitter/tree-sitter-bash")
+               (html . ("https://github.com/tree-sitter/tree-sitter-html" "v0.20.1"))
+               (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "v0.21.2" "src"))
+               (json . ("https://github.com/tree-sitter/tree-sitter-json" "v0.20.2"))
+               (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "tsx/src"))
+               (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "v0.20.3" "typescript/src"))
+               (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))))
+      (add-to-list 'treesit-language-source-alist grammar)
+      (unless (treesit-language-available-p (car grammar))
+        (treesit-install-language-grammar (car grammar)))))
   
-  ;; Configure TypeScript server for web-mode
-  (add-to-list 'eglot-server-programs
-               '(web-mode . ("typescript-language-server" "--stdio"))))
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Emmet - HTML/CSS abbreviation expansion (optional)
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Type: div.container>ul>li*3 then hit C-j to expand
-;; Uncomment if you want it:
-
-;; (use-package emmet-mode
-;;   :ensure t
-;;   :hook ((web-mode . emmet-mode)
-;;          (html-mode . emmet-mode)
-;;          (css-mode . emmet-mode))
-;;   :custom
-;;   (emmet-move-cursor-between-quotes t)
-;;   :bind (:map emmet-mode-keymap
-;;               ("C-j" . emmet-expand-line)))
+  :config
+  (web-setup-install-grammars)
+  
+  ;; Remap old modes to tree-sitter modes
+  (dolist (mapping
+           '((typescript-mode . typescript-ts-mode)
+             (js-mode . typescript-ts-mode)
+             (js2-mode . typescript-ts-mode)
+             (json-mode . json-ts-mode)
+             (css-mode . css-ts-mode)))
+    (add-to-list 'major-mode-remap-alist mapping)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Additional helpful settings
+;;; Completion with Corfu
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Sensible indentation defaults
-(setq js-indent-level 2
-      css-indent-offset 2)
-
-;; Auto-close pairs
-(add-hook 'typescript-ts-mode-hook #'electric-pair-mode)
-(add-hook 'js-ts-mode-hook #'electric-pair-mode)
-(add-hook 'web-mode-hook #'electric-pair-mode)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Project-specific settings via .dir-locals.el
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Example .dir-locals.el for your projects:
-;;
-;; ((typescript-mode . ((typescript-indent-level . 4)
-;;                      (eglot-workspace-configuration
-;;                       . (:typescript (:preferences (:quoteStyle "single")))))))
-;;
-;; This lets you customize settings per-project
+(use-package corfu
+  :ensure t
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0)
+  (corfu-popupinfo-delay '(0.5 . 0.2))
+  (corfu-preview-current 'insert)
+  (corfu-preselect 'prompt)
+  (corfu-on-exact-match nil)
+  :bind (:map corfu-map
+              ("TAB" . corfu-next)
+              ([tab] . corfu-next)
+              ("S-TAB" . corfu-previous)
+              ([backtab] . corfu-previous)
+              ("RET" . corfu-insert))
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Documentation
+;;; Linting with Flycheck
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun my/web-dev-help ()
-  "Show web development quick start."
-  (interactive)
-  (with-help-window "*Web Development Help*"
-    (princ "Web Development in Emacs\n")
-    (princ "=================================\n\n")
-    (princ "Basic Setup (NO npm required!):\n")
-    (princ "  Just install tree-sitter grammars:\n")
-    (princ "    M-x treesit-install-language-grammar RET typescript\n")
-    (princ "    M-x treesit-install-language-grammar RET tsx\n")
-    (princ "    M-x treesit-install-language-grammar RET javascript\n\n")
-    (princ "Optional IDE Features (requires npm):\n")
-    (princ "  If you want autocomplete/jump-to-def/rename:\n")
-    (princ "    npm install -g typescript-language-server typescript\n")
-    (princ "  Then uncomment the Eglot hooks in web.el\n\n")
-    (princ "File Types:\n")
-    (princ "  .ts/.tsx     → TypeScript with tree-sitter\n")
-    (princ "  .js/.jsx     → JavaScript with tree-sitter\n")
-    (princ "  .html/.css   → Web-mode (mixed HTML/CSS/JS)\n\n")
-    (princ "Key Features:\n")
-    (princ "  - Syntax highlighting (tree-sitter)\n")
-    (princ "  - Auto-pairing brackets\n")
-    (princ "  - Smart indentation\n")
-    (princ "  - Optional: LSP features with Eglot\n")))
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode)
+  :bind (:map flycheck-mode-map
+              ("M-n" . flycheck-next-error)
+              ("M-p" . flycheck-previous-error)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LSP Mode
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Performance settings (put in early-init.el ideally)
+(setenv "LSP_USE_PLISTS" "true")
+(setq read-process-output-max (* 10 1024 1024)) ; 10MB
+(setq gc-cons-threshold 200000000)
+
+(use-package lsp-mode
+  :ensure t
+  :diminish "LSP"
+  :hook ((lsp-mode . lsp-diagnostics-mode)
+         (lsp-mode . lsp-enable-which-key-integration)
+         ((tsx-ts-mode typescript-ts-mode js-ts-mode) . lsp-deferred))
+  :custom
+  (lsp-keymap-prefix "C-c l")
+  (lsp-completion-provider :none) ; Use Corfu
+  (lsp-diagnostics-provider :flycheck)
+  (lsp-session-file (locate-user-emacs-file ".lsp-session"))
+  (lsp-log-io nil)
+  (lsp-keep-workspace-alive nil)
+  (lsp-idle-delay 0.5)
+  (lsp-enable-xref t)
+  (lsp-auto-configure t)
+  (lsp-eldoc-enable-hover t)
+  (lsp-enable-dap-auto-configure t)
+  (lsp-enable-file-watchers nil)
+  (lsp-enable-folding nil)
+  (lsp-enable-imenu t)
+  (lsp-enable-indentation nil) ; Prettier handles this
+  (lsp-enable-links nil)
+  (lsp-enable-on-type-formatting nil)
+  (lsp-enable-suggest-server-download t)
+  (lsp-enable-symbol-highlighting t)
+  (lsp-enable-text-document-color nil)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-diagnostic-max-lines 20)
+  (lsp-completion-enable t)
+  (lsp-completion-enable-additional-text-edit t)
+  (lsp-enable-snippet t)
+  (lsp-completion-show-kind t)
+  (lsp-headerline-breadcrumb-enable t)
+  (lsp-headerline-breadcrumb-enable-diagnostics nil)
+  (lsp-headerline-breadcrumb-icons-enable nil)
+  (lsp-modeline-code-actions-enable nil)
+  (lsp-modeline-diagnostics-enable nil)
+  (lsp-signature-doc-lines 1)
+  (lsp-ui-doc-use-childframe t)
+  (lsp-eldoc-render-all nil)
+  (lsp-lens-enable nil)
+  (lsp-semantic-tokens-enable nil) ; Treesitter handles this
+  
+  :preface
+  ;; LSP Booster for performance
+  (defun lsp-booster--advice-json-parse (old-fn &rest args)
+    "Try to parse bytecode instead of json."
+    (or
+     (when (equal (following-char) ?#)
+       (let ((bytecode (read (current-buffer))))
+         (when (byte-code-function-p bytecode)
+           (funcall bytecode))))
+     (apply old-fn args)))
+  
+  (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+    "Prepend emacs-lsp-booster command to lsp CMD."
+    (let ((orig-result (funcall old-fn cmd test?)))
+      (if (and (not test?)
+               (not (file-remote-p default-directory))
+               lsp-use-plists
+               (not (functionp 'json-rpc-connection))
+               (executable-find "emacs-lsp-booster"))
+          (progn
+            (message "Using emacs-lsp-booster for %s!" orig-result)
+            (cons "emacs-lsp-booster" orig-result))
+        orig-result)))
+  
+  :init
+  (setq lsp-use-plists t)
+  
+  ;; LSP Booster integration (requires emacs-lsp-booster binary)
+  (advice-add (if (progn (require 'json)
+                         (fboundp 'json-parse-buffer))
+                  'json-parse-buffer
+                'json-read)
+              :around
+              #'lsp-booster--advice-json-parse)
+  (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command))
+
+(use-package lsp-completion
+  :no-require
+  :hook ((lsp-mode . lsp-completion-mode)))
+
+(use-package lsp-ui
+  :ensure t
+  :commands (lsp-ui-doc-show lsp-ui-doc-glance)
+  :bind (:map lsp-mode-map
+              ("C-c C-d" . lsp-ui-doc-glance))
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-ui-doc-show-with-cursor nil
+        lsp-ui-doc-include-signature t
+        lsp-ui-doc-position 'at-point))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ESLint LSP
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package lsp-eslint
+  :demand t
+  :after lsp-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tailwind LSP (optional)
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package lsp-tailwindcss
+  :ensure t
+  :init
+  (setq lsp-tailwindcss-add-on-mode t)
+  :config
+  (dolist (tw-major-mode
+           '(css-mode css-ts-mode
+             typescript-mode typescript-ts-mode tsx-ts-mode
+             js2-mode js-ts-mode))
+    (add-to-list 'lsp-tailwindcss-major-modes tw-major-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Prettier formatting with Apheleia
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package apheleia
+  :ensure t
+  :diminish ""
+  :config
+  (setf (alist-get 'prettier-json apheleia-formatters)
+        '("prettier" "--stdin-filepath" filepath))
+  (apheleia-global-mode +1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Structural editing with Combobulate (optional)
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package combobulate
+  :ensure t
+  :preface
+  (setq combobulate-key-prefix "C-c o")
+  :hook ((python-ts-mode . combobulate-mode)
+         (js-ts-mode . combobulate-mode)
+         (html-ts-mode . combobulate-mode)
+         (css-ts-mode . combobulate-mode)
+         (yaml-ts-mode . combobulate-mode)
+         (typescript-ts-mode . combobulate-mode)
+         (json-ts-mode . combobulate-mode)
+         (tsx-ts-mode . combobulate-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Menu bar
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(with-eval-after-load 'menu-bar
+  (defvar knoglerdev-web-menu (make-sparse-keymap "Web Dev"))
+  
+  (define-key knoglerdev-web-menu [lsp-doctor]
+    '(menu-item "LSP Doctor" lsp-doctor
+                :help "Check LSP configuration"))
+  
+  (define-key knoglerdev-web-menu [lsp-install-server]
+    '(menu-item "Install LSP Server" lsp-install-server
+                :help "Install TypeScript/ESLint/Tailwind servers"))
+  
+  (define-key knoglerdev-web-menu [install-grammars]
+    '(menu-item "Install Tree-sitter Grammars" web-setup-install-grammars
+                :help "Install all web development grammars"))
+  
+  (define-key-after global-map [menu-bar web-dev]
+    (cons "Web Dev" knoglerdev-web-menu)
+    'lisp-dev))
 
 (provide 'web)
+;;; web.el ends here

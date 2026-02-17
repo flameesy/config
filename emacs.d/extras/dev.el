@@ -169,3 +169,9 @@
 
 ;; Common Lisp
 (load-file (expand-file-name "extras/lisp.el" user-emacs-directory))
+
+;; Web (React, Tailwind, TSX)
+;(load-file (expand-file-name "extras/web.el" user-emacs-directory))
+
+;; C/C++
+;(load-file (expand-file-name "extras/clang.el" user-emacs-directory))
