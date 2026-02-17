@@ -43,10 +43,9 @@ curl -o /tmp/ql.lisp http://beta.quicklisp.org/quicklisp.lisp`
 Danach Extension aus dem Marketplace installieren. ALIVE startet sich sobald eine .Lisp-Datei geoeffnet wird
 
 ### Emacs mit custom Config
-- Lade Emacs runter zB von Github: https://github.com/GChristensen/rho-emacs/releases
-- Bei der Installation *C:\Users\<user>* angeben fuer den "Home Folder"
-- Dann Configfiles hinterlegen in *~/.emacs.d/*: https://github.com/flameesy/config (Note: Diese basieren auf "Emacs Bedrock" und funktionieren erst ab Version 27.1!)
-- Waehrend Installation wirft Embark eine Fehlermeldung. Emacs schliessen und wieder oeffnen loest das Problem
+- Lade Emacs > 28 runter
+- **Windows** Bei der Installation *C:\Users\<user>* angeben fuer den "Home Folder" 
+- Dann Configfiles hinterlegen in *~/.emacs.d/*: https://github.com/flameesy/config 
 
 #### Alternativ ohne Configfiles hier weitermachen (auch essentiell fuer Custom Config!):
 
@@ -59,3 +58,4 @@ Danach Extension aus dem Marketplace installieren. ALIVE startet sich sobald ein
 
 
 Danach `M-x package-install  <RET> sly` und alles ist erledigt um erfolgreich zu entwickeln! 
+
