@@ -6,6 +6,16 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; Install calfw
+(unless (package-installed-p 'calfw)
+  (package-install 'calfw))
+  
+(unless (package-installed-p 'calfw-ical)
+  (package-install 'calfw-ical))
+  
+(unless (package-installed-p 'calfw-org)
+  (package-install 'calfw-org))
+  
 (use-package calfw
   :ensure t
   :config
@@ -26,6 +36,11 @@
 (use-package calfw-ical
   :ensure t
   :after calfw)
+  
+;; Load the packages
+(require 'calfw)
+(require 'calfw-ical)
+(require 'calfw-org)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
