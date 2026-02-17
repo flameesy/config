@@ -1,198 +1,134 @@
-;;;; clang.el --- C/C++ development setup -*- lexical-binding: t; -*-
+;;; clang.el --- C and C++ development setup  -*- lexical-binding: t; -*-
+;;;
+;;; Voraussetzungen:
+;;;
+;;;   LSP (clangd):
+;;;     sudo apt install clangd        (Debian/Ubuntu)
+;;;     sudo pacman -S clang           (Arch)
+;;;     brew install llvm              (macOS)
+;;;
+;;;   clangd braucht eine compile_commands.json im Projektroot.
+;;;   Erzeugen mit CMake:   cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+;;;   Oder mit bear:        bear -- make
+;;;
+;;;   Tree-sitter (optional, empfohlen):
+;;;     M-x treesit-install-language-grammar RET c RET
+;;;     M-x treesit-install-language-grammar RET cpp RET
+
+;;; Contents:
+;;;
+;;;  - lsp-mode + lsp-ui
+;;;  - C/C++ Grundeinstellungen
+;;;  - Tree-sitter Integration
+;;;  - cmake-mode
+;;;  - Debugging mit gdb-mi
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Setup Instructions
+;;;   lsp-mode
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; STEP 1: Install Tree-sitter grammars
-;;   Run: M-x clang-setup-install-grammars
-;;   This downloads and compiles the C/C++ parsers
-;;
-;; STEP 2: Install clangd LSP server
-;;   - Linux: sudo dnf install clangd  (or pacman -S clang)
-;;   - Windows: Download from LLVM releases
-;;   Verify: clangd --version
-;;
-;; STEP 3: (Optional) Install CMake language server
-;;   pip install cmake-language-server
-;;
-;; STEP 4: Project setup
-;;   C/C++ projects need a compile_commands.json for best LSP experience
-;;   
-;;   For CMake projects:
-;;     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .
-;;   
-;;   For Make projects:
-;;     Use Bear: bear -- make
-;;   
-;;   This tells clangd how to compile your code
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook
+  ((c-mode      . lsp-deferred)
+   (c++-mode    . lsp-deferred)
+   (c-ts-mode   . lsp-deferred)
+   (c++-ts-mode . lsp-deferred))
+  :custom
+  (lsp-keymap-prefix "C-c l")           ; Alle LSP-Befehle unter C-c l
+  (lsp-idle-delay 0.1)                  ; Wie schnell LSP auf Änderungen reagiert
+  (lsp-log-io nil)                      ; Kein IO-Logging (Performance)
+  (lsp-clangd-binary-path (or (executable-find "clangd") "clangd"))
+  :config
+  (lsp-enable-which-key-integration t))
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  ;; Sideline: zeigt Fehler/Warnungen inline neben dem Code
+  (lsp-ui-sideline-enable t)
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-hover nil)       ; hover lieber explizit via C-c l h
+  (lsp-ui-sideline-show-code-actions t)
+  ;; Doc-Popup beim Hovern über Symbolen
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-position 'at-point)
+  (lsp-ui-doc-show-with-cursor nil)      ; nur bei explizitem Aufruf...
+  (lsp-ui-doc-show-with-mouse t)         ; ...oder Maus drüber
+  ;; Breadcrumb (Pfad im Header: Datei > Funktion > ...)
+  (lsp-headerline-breadcrumb-enable t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tree-sitter for C/C++
+;;;   C/C++ Grundeinstellungen
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun clang-setup-install-grammars ()
-  "Install Tree-sitter grammars for C/C++ development."
-  (interactive)
-  (dolist (grammar
-           '((c "https://github.com/tree-sitter/tree-sitter-c")
-             (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-             (cmake "https://github.com/uyha/tree-sitter-cmake")))
-    (add-to-list 'treesit-language-source-alist grammar)
-    (unless (treesit-language-available-p (car grammar))
-      (treesit-install-language-grammar (car grammar)))))
+(use-package cc-mode
+  :hook
+  ((c-mode   . knoglerdev--c-setup)
+   (c++-mode . knoglerdev--c-setup))
+  :config
+  (defun knoglerdev--c-setup ()
+    "Gemeinsame Einstellungen für C und C++."
+    (c-set-style "k&r")
+    (setq-local c-basic-offset 4)
+    (setq-local tab-width 4)
+    (setq-local indent-tabs-mode nil)
+    (electric-pair-local-mode 1)
+    (display-fill-column-indicator-mode 1)
+    (setq-local fill-column 100)))
 
-;; Auto-install grammars on first load
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Tree-sitter Integration
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (when (treesit-available-p)
-  (clang-setup-install-grammars))
+  (add-to-list 'major-mode-remap-alist '(c-mode   . c-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
 
-;; File associations
-(add-to-list 'auto-mode-alist '("\\.c\\'" . c-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.cxx\\'" . c++-ts-mode))
-(add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.c\\'"   . c-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.h\\'"   . c-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.cc\\'"  . c++-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.cxx\\'" . c++-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.hxx\\'" . c++-ts-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; C/C++ Style and Formatting
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq c-basic-offset 4)           ; 4 spaces per indent level
-(setq c-default-style "linux")    ; Linux kernel style (K&R-ish)
-
-;; Alternative styles: "gnu", "k&r", "bsd", "stroustrup", "whitesmith", "ellemtel"
-;; Customize per-mode if needed:
-;; (setq c-default-style '((java-mode . "java")
-;;                         (awk-mode . "awk")
-;;                         (other . "linux")))
+  (add-hook 'c-ts-mode-hook   #'knoglerdev--c-setup)
+  (add-hook 'c++-ts-mode-hook #'knoglerdev--c-setup))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Eglot LSP integration (uses clangd)
+;;;   cmake-mode
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(with-eval-after-load 'eglot
-  ;; Enable eglot for C/C++ modes
-  (add-hook 'c-ts-mode-hook 'eglot-ensure)
-  (add-hook 'c++-ts-mode-hook 'eglot-ensure)
-  (add-hook 'cmake-ts-mode-hook 'eglot-ensure)
-  
-  ;; Clangd-specific settings
-  (add-to-list 'eglot-server-programs
-               '((c-ts-mode c++-ts-mode) 
-                 . ("clangd"
-                    "--background-index"
-                    "--clang-tidy"
-                    "--completion-style=detailed"
-                    "--header-insertion=iwyu"
-                    "--header-insertion-decorators")))
-  
-  ;; CMake LSP
-  (add-to-list 'eglot-server-programs
-               '(cmake-ts-mode . ("cmake-language-server"))))
+(use-package cmake-mode
+  :ensure t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+         ("\\.cmake\\'"         . cmake-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compilation and debugging
+;;;   Debugging mit GDB
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Make compile command smarter
-(setq compilation-scroll-output t)  ; Auto-scroll compilation buffer
+(use-package gdb-mi
+  :custom
+  (gdb-many-windows t)
+  (gdb-show-main t))
 
-;; Common compile commands
-(defun clang-compile-make ()
-  "Compile with make."
-  (interactive)
-  (compile "make -j$(nproc)"))
-
-(defun clang-compile-cmake ()
-  "Compile with cmake."
-  (interactive)
-  (compile "cmake --build build -j$(nproc)"))
-
-(defun clang-run-executable ()
-  "Run the compiled executable."
-  (interactive)
-  (let ((exe (read-file-name "Executable: " default-directory)))
-    (compile exe)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; GDB integration
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq gdb-many-windows t)          ; Use multi-window GDB layout
-(setq gdb-show-main t)             ; Show main source window
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Keybindings
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun clang-setup-keybindings ()
-  "Setup C/C++ keybindings."
-  (local-set-key (kbd "C-c C-c") 'compile)
-  (local-set-key (kbd "C-c C-m") 'clang-compile-make)
-  (local-set-key (kbd "C-c C-k") 'clang-compile-cmake)
-  (local-set-key (kbd "C-c C-r") 'clang-run-executable)
-  (local-set-key (kbd "C-c C-d") 'gdb))
-
-(add-hook 'c-ts-mode-hook 'clang-setup-keybindings)
-(add-hook 'c++-ts-mode-hook 'clang-setup-keybindings)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Menu bar
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(with-eval-after-load 'menu-bar
-  (defvar knoglerdev-clang-menu (make-sparse-keymap "C/C++"))
-  
-  (define-key knoglerdev-clang-menu [gdb]
-    '(menu-item "Debug with GDB" gdb
-                :help "Start GDB debugger (C-c C-d)"))
-  
-  (define-key knoglerdev-clang-menu [run]
-    '(menu-item "Run Executable" clang-run-executable
-                :help "Run compiled program (C-c C-r)"))
-  
-  (define-key knoglerdev-clang-menu [separator] '(menu-item "--"))
-  
-  (define-key knoglerdev-clang-menu [cmake]
-    '(menu-item "Compile (CMake)" clang-compile-cmake
-                :help "Build with CMake (C-c C-k)"))
-  
-  (define-key knoglerdev-clang-menu [make]
-    '(menu-item "Compile (Make)" clang-compile-make
-                :help "Build with Make (C-c C-m)"))
-  
-  (define-key knoglerdev-clang-menu [compile]
-    '(menu-item "Compile..." compile
-                :help "Run compile command (C-c C-c)"))
-  
-  (define-key knoglerdev-clang-menu [separator-2] '(menu-item "--"))
-  
-  (define-key knoglerdev-clang-menu [install-grammars]
-    '(menu-item "Install Tree-sitter Grammars" clang-setup-install-grammars
-                :help "Install C/C++ grammars"))
-  
-  (define-key-after global-map [menu-bar clang]
-    (cons "C/C++" knoglerdev-clang-menu)
-    'web-dev))
+(with-eval-after-load 'cc-mode
+  (define-key c-mode-base-map (kbd "C-c C-c") #'compile)
+  (define-key c-mode-base-map (kbd "C-c C-r") #'recompile))
 
 (provide 'clang)
 ;;; clang.el ends here
