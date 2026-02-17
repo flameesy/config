@@ -11,56 +11,34 @@
 ;;;   Erzeugen mit CMake:   cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 ;;;   Oder mit bear:        bear -- make
 ;;;
-;;;   Tree-sitter (optional, empfohlen):
-;;;     M-x treesit-install-language-grammar RET c RET
-;;;     M-x treesit-install-language-grammar RET cpp RET
+;;;   Tree-sitter Grammatiken einmalig installieren:
+;;;     M-x clang-setup-install-grammars
 
 ;;; Contents:
 ;;;
-;;;  - lsp-mode + lsp-ui
+;;;  - Tree-sitter Grammatiken
 ;;;  - C/C++ Grundeinstellungen
-;;;  - Tree-sitter Integration
+;;;  - lsp-mode + lsp-ui (mit c-ts-mode Registrierung)
 ;;;  - cmake-mode
 ;;;  - Debugging mit gdb-mi
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   lsp-mode
+;;;   Tree-sitter Grammatiken installieren
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package lsp-mode
-  :ensure t
-  :commands (lsp lsp-deferred)
-  :hook
-  ((c-mode      . lsp-deferred)
-   (c++-mode    . lsp-deferred)
-   (c-ts-mode   . lsp-deferred)
-   (c++-ts-mode . lsp-deferred))
-  :custom
-  (lsp-keymap-prefix "C-c l")           ; Alle LSP-Befehle unter C-c l
-  (lsp-idle-delay 0.1)                  ; Wie schnell LSP auf Änderungen reagiert
-  (lsp-log-io nil)                      ; Kein IO-Logging (Performance)
-  (lsp-clangd-binary-path (or (executable-find "clangd") "clangd"))
-  :config
-  (lsp-enable-which-key-integration t))
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  ;; Sideline: zeigt Fehler/Warnungen inline neben dem Code
-  (lsp-ui-sideline-enable t)
-  (lsp-ui-sideline-show-diagnostics t)
-  (lsp-ui-sideline-show-hover nil)       ; hover lieber explizit via C-c l h
-  (lsp-ui-sideline-show-code-actions t)
-  ;; Doc-Popup beim Hovern über Symbolen
-  (lsp-ui-doc-enable t)
-  (lsp-ui-doc-position 'at-point)
-  (lsp-ui-doc-show-with-cursor nil)      ; nur bei explizitem Aufruf...
-  (lsp-ui-doc-show-with-mouse t)         ; ...oder Maus drüber
-  ;; Breadcrumb (Pfad im Header: Datei > Funktion > ...)
-  (lsp-headerline-breadcrumb-enable t))
+;; Einmalig aufrufen: M-x clang-setup-install-grammars
+(defun clang-setup-install-grammars ()
+  "Installiert Tree-sitter Grammatiken für C und C++, falls nicht vorhanden."
+  (interactive)
+  (dolist (grammar
+           '((c   . ("https://github.com/tree-sitter/tree-sitter-c"))
+             (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))))
+    (add-to-list 'treesit-language-source-alist grammar)
+    (unless (treesit-language-available-p (car grammar))
+      (treesit-install-language-grammar (car grammar))))
+  (message "C/C++ Tree-sitter Grammatiken installiert – bitte Emacs neu starten."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -68,41 +46,79 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(use-package cc-mode
-  :hook
-  ((c-mode   . knoglerdev--c-setup)
-   (c++-mode . knoglerdev--c-setup))
-  :config
-  (defun knoglerdev--c-setup ()
-    "Gemeinsame Einstellungen für C und C++."
-    (c-set-style "k&r")
-    (setq-local c-basic-offset 4)
-    (setq-local tab-width 4)
-    (setq-local indent-tabs-mode nil)
-    (electric-pair-local-mode 1)
-    (display-fill-column-indicator-mode 1)
-    (setq-local fill-column 100)))
+(defun knoglerdev--c-setup ()
+  "Gemeinsame Einstellungen für C und C++."
+  (setq-local tab-width 4)
+  (setq-local indent-tabs-mode nil)
+  (setq-local treesit-simple-indent-offset 4)
+  (electric-pair-local-mode 1)
+  (display-fill-column-indicator-mode 1)
+  (setq-local fill-column 100))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Tree-sitter Integration
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-hook 'c-ts-mode-hook   #'knoglerdev--c-setup)
+(add-hook 'c++-ts-mode-hook #'knoglerdev--c-setup)
 
-(when (treesit-available-p)
+;; Dateiendungen und Remaps – nur wenn Grammatiken tatsächlich installiert sind
+(when (and (treesit-available-p)
+           (treesit-language-available-p 'c)
+           (treesit-language-available-p 'cpp))
   (add-to-list 'major-mode-remap-alist '(c-mode   . c-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
-
   (add-to-list 'auto-mode-alist '("\\.c\\'"   . c-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.h\\'"   . c-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.cc\\'"  . c++-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.cxx\\'" . c++-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.hxx\\'" . c++-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.hxx\\'" . c++-ts-mode)))
 
-  (add-hook 'c-ts-mode-hook   #'knoglerdev--c-setup)
-  (add-hook 'c++-ts-mode-hook #'knoglerdev--c-setup))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   lsp-mode + clangd
+;;;
+;;; WICHTIG: lsp-mode kennt c-ts-mode und c++-ts-mode standardmäßig NICHT.
+;;; Wir müssen clangd explizit für diese Modes registrieren, sonst startet
+;;; der LSP-Server nicht und es gibt kein Highlighting/Completion.
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook
+  ((c-ts-mode   . lsp-deferred)
+   (c++-ts-mode . lsp-deferred))
+  :custom
+  (lsp-keymap-prefix "C-c l")
+  (lsp-idle-delay 0.1)
+  (lsp-log-io nil)
+  (lsp-clients-clangd-args '("--background-index"
+                              "--clang-tidy"
+                              "--completion-style=detailed"
+                              "--header-insertion=never"
+                              "-j=4"))
+  :config
+  (lsp-enable-which-key-integration t)
+
+  ;; clangd für c-ts-mode und c++-ts-mode registrieren.
+  ;; lsp-mode erkennt diese Modes standardmäßig nicht, daher müssen wir
+  ;; die Sprachzuordnung manuell eintragen.
+  (add-to-list 'lsp-language-id-configuration '(c-ts-mode   . "c"))
+  (add-to-list 'lsp-language-id-configuration '(c++-ts-mode . "cpp")))
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :custom
+  (lsp-ui-sideline-enable t)
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-show-code-actions t)
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-position 'at-point)
+  (lsp-ui-doc-show-with-cursor nil)
+  (lsp-ui-doc-show-with-mouse t)
+  (lsp-headerline-breadcrumb-enable t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,9 +142,13 @@
   (gdb-many-windows t)
   (gdb-show-main t))
 
-(with-eval-after-load 'cc-mode
-  (define-key c-mode-base-map (kbd "C-c C-c") #'compile)
-  (define-key c-mode-base-map (kbd "C-c C-r") #'recompile))
+(with-eval-after-load 'c-ts-mode
+  (define-key c-ts-mode-map (kbd "C-c C-c") #'compile)
+  (define-key c-ts-mode-map (kbd "C-c C-r") #'recompile))
+
+(with-eval-after-load 'c++-ts-mode
+  (define-key c++-ts-mode-map (kbd "C-c C-c") #'compile)
+  (define-key c++-ts-mode-map (kbd "C-c C-r") #'recompile))
 
 (provide 'clang)
 ;;; clang.el ends here

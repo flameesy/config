@@ -174,4 +174,4 @@
 ;(load-file (expand-file-name "extras/web.el" user-emacs-directory))
 
 ;; C/C++
-(load-file (expand-file-name "extras/clang.el" user-emacs-directory))
+;(load-file (expand-file-name "extras/clang.el" user-emacs-directory))
