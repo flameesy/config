@@ -1,114 +1,35 @@
-;;; early-init.el --- Emacs Solo Configuration --- Early Init  -*- lexical-binding: t; -*-
-;;
-;; Author: Rahul Martim Juliato
-;; URL: https://github.com/LionyxML/emacs-solo
-;; Package-Requires: ((emacs "30.1"))
-;; Keywords: config
-;; SPDX-License-Identifier: GPL-3.0-or-later
-;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   Basic settings for quick startup and convenience
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Commentary:
-;;  Early init configuration for Emacs Solo
-;;
+;; Startup speed, annoyance suppression
+(setq knoglerdev--initial-gc-threshold gc-cons-threshold)
+(setq gc-cons-threshold 10000000)
+(setq byte-compile-warnings '(not obsolete))
+(setq warning-suppress-log-types '((comp) (bytecomp)))
+(setq native-comp-async-report-warnings-errors 'silent)
 
-;;; Code:
+;; Silence stupid startup message
+(setq inhibit-startup-echo-area-message (user-login-name))
 
-(defcustom emacs-solo-avoid-flash-options
-  '((enabled . t)
-    (background . "#292D3E") ;; Catppuccin "#1e1e2e" or Crafters "#292D3E"
-    (foreground . "#292D3E")
-    (reset-background . "#292D3E")
-    (reset-foreground . "#EEFFFF")) ;; Catppuccin "#cdd6f4" or Crafters "#EEFFFF"
-  "Options to avoid flash of light on Emacs startup.
-- `enabled`: Whether to apply the workaround.
-- `background`, `foreground`: Initial colors to use.
-- `reset-background`, `reset-foreground`: Optional explicit colors to restore after startup.
+;; Default frame configuration: full screen, good-looking title bar on macOS
+(setq frame-resize-pixelwise t)
+(tool-bar-mode -1)                      ; All these tools are in the menu-bar anyway
+(setq default-frame-alist '((fullscreen . maximized)
 
-NOTE: The default values here presented are set for the default
-`emacs-solo' custom theme.  If you'd like to turn this ON with another
-theme, change the background/foreground variables.
+;; Turn scroll bars on/off:
+(vertical-scroll-bars . nil)
+(horizontal-scroll-bars . nil)
 
-If reset values are nil, nothing is reset."
-  :type '(alist :key-type symbol :value-type (choice (const nil) string))
-  :group 'emacs-solo)
+;; Setting the face in here prevents flashes of
+;; color as the theme gets activated
+(background-color . "#000000")
+(foreground-color . "#ffffff")
+(ns-appearance . dark)
+(ns-transparent-titlebar . t)))
 
-
-;;; -------------------- PERFORMANCE & HACKS
-;; HACK: inscrease startup speed
-
-;; Delay garbage collection while Emacs is booting
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.6)
-
-;; Schedule garbage collection sensible defaults for after booting
-(add-hook 'after-init-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 100 1024 1024)
-                  gc-cons-percentage 0.1)))
-
-;; Single VC backend inscreases booting speed
-(setq vc-handled-backends '(Git))
-
-;; Do not native compile if on battery power
-(setopt native-comp-async-on-battery-power nil) ; EMACS-31
-
-;; HACK: avoid being flashbanged
-(defun emacs-solo/avoid-initial-flash-of-light ()
-  "Avoid flash of light when starting Emacs, based on `emacs-solo-avoid-flash-options`."
-  (when (alist-get 'enabled emacs-solo-avoid-flash-options)
-    (setq mode-line-format nil)
-    (set-face-attribute 'default nil
-                        :background (alist-get 'background emacs-solo-avoid-flash-options)
-                        :foreground (alist-get 'foreground emacs-solo-avoid-flash-options))))
-
-(defun emacs-solo/reset-default-colors ()
-  "Reset any explicitly defined reset values in `emacs-solo-avoid-flash-options`."
-  (when (alist-get 'enabled emacs-solo-avoid-flash-options)
-    (let ((bg (alist-get 'reset-background emacs-solo-avoid-flash-options))
-          (fg (alist-get 'reset-foreground emacs-solo-avoid-flash-options)))
-      (when bg
-        (set-face-attribute 'default nil :background bg))
-      (when fg
-        (set-face-attribute 'default nil :foreground fg)))))
-
-(emacs-solo/avoid-initial-flash-of-light)
-(add-hook 'after-init-hook #'emacs-solo/reset-default-colors)
-
-
-;; Always start Emacs and new frames maximized
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-
-;; Better Window Management handling
-(setq frame-resize-pixelwise t
-      frame-inhibit-implied-resize t
-      frame-title-format
-      '(:eval
-        (let ((project (project-current)))
-          (if project
-              (concat "Emacs - [p] " (project-name project))
-              (concat "Emacs - " (buffer-name))))))
-
-(when (eq system-type 'darwin)
-  (setq ns-use-proxy-icon nil))
-
-(setq inhibit-compacting-font-caches t)
-
-;; Disables unused UI Elements
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-;;(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'tooltip-mode) (tooltip-mode -1))
-(if (fboundp 'fringe-mode) (fringe-mode -1))
-
-
-;; Avoid raising the *Messages* buffer if anything is still without
-;; lexical bindings
-(setq warning-minimum-level :error)
-(setq warning-suppress-types '((lexical-binding)))
-
-;; I like the toolbar.
+;; Disable UI elements early
+;;(push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
-
-(provide 'early-init)
-;;; early-init.el ends here
