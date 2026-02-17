@@ -93,3 +93,23 @@
 (global-set-key (kbd "C-c m p") 'emms-play-music-directory)
 (global-set-key (kbd "C-c m d") 'emms-set-music-directory)
 (global-set-key (kbd "C-c m m") 'emms)
+
+;; Media menu
+(with-eval-after-load 'menu-bar
+  (defvar knoglerdev-media-menu (make-sparse-keymap "Media"))
+  
+  (define-key knoglerdev-media-menu [emms-open]
+    '(menu-item "Open EMMS" emms
+                :help "Open EMMS music player (C-c m m)"))
+  
+  (define-key knoglerdev-media-menu [emms-set-dir]
+    '(menu-item "Set Music Directory" emms-set-music-directory
+                :help "Set music directory (C-c m d)"))
+  
+  (define-key knoglerdev-media-menu [emms-play]
+    '(menu-item "Play Music Directory" emms-play-music-directory
+                :help "Play music from directory (C-c m p)"))
+  
+  (define-key-after global-map [menu-bar media]
+    (cons "Media" knoglerdev-media-menu)
+    'lisp-dev))

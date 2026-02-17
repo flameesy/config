@@ -8,7 +8,10 @@
 ;; - M-.: Jump to definition
 ;; - M-,: Pop back from definition
 ;; - C-c C-d h: Hyperspec lookup
-
+;;
+;; Enable SLY REPL in workspace
+(setq knoglerdev-auto-start-sly t)
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLY - Superior Lisp Interaction Mode for Emacs
@@ -29,6 +32,7 @@
   
   ;; Completion style
   (sly-complete-symbol-function 'sly-flex-completions)
+  
   
   :config
   ;; Better indentation for Common Lisp
@@ -213,6 +217,18 @@
           "(in-package #:my-package)\n\n"))
 
 (global-set-key (kbd "C-c l p") 'my/insert-package-definition)
+
+;; Lisp development menu
+(with-eval-after-load 'menu-bar
+  (defvar knoglerdev-lisp-menu (make-sparse-keymap "Lisp"))
+  
+  (define-key knoglerdev-lisp-menu [insert-package]
+    '(menu-item "Insert Package Definition" my/insert-package-definition
+                :help "Insert Common Lisp package definition (C-c l p)"))
+  
+  (define-key-after global-map [menu-bar lisp-dev]
+    (cons "Lisp" knoglerdev-lisp-menu)
+    'dashboard-menu))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

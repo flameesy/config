@@ -75,10 +75,10 @@ If the new path's directories does not exist, create them."
   :ensure t
   :config
   (which-key-mode))
-
-;; rg: better ripgrep integration
+  
+;; rg: better ripgrep integration  
 (use-package rg
-  :ensure t)
+  :ensure t)  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -130,8 +130,7 @@ If the new path's directories does not exist, create them."
 (setopt mouse-wheel-tilt-scroll t)
 (setopt mouse-wheel-flip-direction t)
 
-;; We won't set these, but they're good to know about
-;;
+;; Ggood to know
 ;; (setopt indent-tabs-mode nil)
 (setopt tab-width 2)
 
@@ -143,7 +142,6 @@ If the new path's directories does not exist, create them."
 (cua-mode)
 
 ;; For terminal users, make the mouse more useful
-
 (xterm-mouse-mode 1)
 
 ;; Display line numbers in programming mode
@@ -165,6 +163,17 @@ If the new path's directories does not exist, create them."
 
 ;; Show the tab-bar as soon as tab-bar functions are invoked
 (setopt tab-bar-show 1)
+(tab-bar-mode 1)
+(setq tab-bar-new-tab-choice "*dashboard*")
+(setq tab-bar-close-button-show nil)  ; Cleaner look
+(setq tab-bar-new-button-show nil)
+
+;; Better tab switching
+(global-set-key (kbd "C-c w 1") (lambda () (interactive) (tab-bar-select-tab 1)))
+(global-set-key (kbd "C-c w 2") (lambda () (interactive) (tab-bar-select-tab 2)))
+(global-set-key (kbd "C-c w 3") (lambda () (interactive) (tab-bar-select-tab 3)))
+(global-set-key (kbd "C-c w n") 'tab-bar-new-tab)
+(global-set-key (kbd "C-c w c") 'tab-bar-close-tab)
 
 ;; Add the time to the tab-bar, if visible
 (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
@@ -246,27 +255,23 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; UI/UX enhancements mostly focused on minibuffer and autocompletion interfaces
-;; These ones are *strongly* recommended!
+;; UI/UX enhancements (Treemacs, minibuffer, autocompletion interfaces...)
 (load-file (expand-file-name "extras/base.el" user-emacs-directory))
 
 ;; Dashboard, essential for looksmaxxing
 (load-file (expand-file-name "extras/dashboard.el" user-emacs-directory))
 
-;; Packages for software development
+;; Packages for software development (language-specific in subfiles)
 (load-file (expand-file-name "extras/dev.el" user-emacs-directory))
 
 ;; Org-mode configuration
-;; WARNING: need to customize things inside the elisp file before use! See
-;; the file extras/org-intro.txt for help.
 ;(load-file (expand-file-name "extras/org.el" user-emacs-directory))
 
 ;; Email configuration in Emacs
-;; WARNING: needs the `mu' program installed; see email.el
 ;(load-file (expand-file-name "extras/email.el" user-emacs-directory))
 
 ;; Calendar
-(load-file (expand-file-name "extras/calendar.el" user-emacs-directory))
+;;(load-file (expand-file-name "extras/calendar.el" user-emacs-directory))
 
 ;; Media player
 ;; WARNING: needs mpv installed

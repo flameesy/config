@@ -184,5 +184,21 @@
 ;; (add-to-list 'dashboard-item-generators '(quick-stats . my/dashboard-insert-quick-stats))
 ;; (add-to-list 'dashboard-items '(quick-stats) t)
 
+;; Dashboard menu
+(with-eval-after-load 'menu-bar
+  (defvar knoglerdev-dashboard-menu (make-sparse-keymap "Dashboard"))
+  
+  (define-key knoglerdev-dashboard-menu [dashboard-open]
+    '(menu-item "Open Dashboard" dashboard-open
+                :help "Quick return to dashboard (C-c h)"))
+  
+  (define-key knoglerdev-dashboard-menu [dashboard-refresh]
+    '(menu-item "Refresh Dashboard" dashboard-refresh-buffer
+                :help "Refresh dashboard (C-c d)"))
+  
+  (define-key-after global-map [menu-bar dashboard-menu]
+    (cons "Dashboard" knoglerdev-dashboard-menu)
+    'calendar))
+
 (provide 'dashboard)
 ;;; dashboard.el ends here

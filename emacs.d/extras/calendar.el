@@ -1,40 +1,75 @@
 ;;;; calendar.el --- Calendar configuration -*- lexical-binding: t; -*-
-;;;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Package setup
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Install calfw
-(unless (package-installed-p 'calfw)
-  (package-install 'calfw))
+(use-package calfw
+  :ensure t
+  :config
+  ;; Better visual defaults
+  (setq calfw:fchar-junction ?╋
+        calfw:fchar-vertical-line ?┃
+        calfw:fchar-horizontal-line ?━
+        calfw:fchar-left-junction ?┣
+        calfw:fchar-right-junction ?┫
+        calfw:fchar-top-junction ?┳
+        calfw:fchar-top-left-corner ?┏
+        calfw:fchar-top-right-corner ?┓))
 
-(unless (package-installed-p 'calfw-ical)
-  (package-install 'calfw-ical))
-  
-(unless (package-installed-p 'calfw-org)
-  (package-install 'calfw-org))
+(use-package calfw-org
+  :ensure t
+  :after (calfw org))
 
-;; Load the packages
-(require 'calfw)
-(require 'calfw-ical)
-(require 'calfw-org)
+(use-package calfw-ical
+  :ensure t
+  :after calfw)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; German holiday definitions
+;;; Org-mode integration
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq holiday-general-holidays nil)
-(setq holiday-christian-holidays nil)
-(setq holiday-hebrew-holidays nil)
-(setq holiday-islamic-holidays nil)
-(setq holiday-bahai-holidays nil)
-(setq holiday-oriental-holidays nil)
+;; Org agenda files
+(setq org-agenda-files (list (expand-file-name "org/" user-emacs-directory)))
 
-;; Define German holidays
+;; Create org directory if it doesn't exist
+(unless (file-exists-p (car org-agenda-files))
+  (make-directory (car org-agenda-files) t))
+
+;; Org agenda settings
+(setq org-agenda-span 'month
+      org-agenda-start-on-weekday 1
+      org-deadline-warning-days 7
+      org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; German locale settings
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq calendar-week-start-day 1)
+(setq calendar-day-name-array
+      ["Sonntag" "Montag" "Dienstag" "Mittwoch" 
+       "Donnerstag" "Freitag" "Samstag"])
+(setq calendar-month-name-array
+      ["Januar" "Februar" "März" "April" "Mai" "Juni"
+       "Juli" "August" "September" "Oktober" "November" "Dezember"])
+
+;; Disable default holidays
+(setq holiday-general-holidays nil
+      holiday-christian-holidays nil
+      holiday-hebrew-holidays nil
+      holiday-islamic-holidays nil
+      holiday-bahai-holidays nil
+      holiday-oriental-holidays nil)
+
+;; German holidays
 (setq holiday-local-holidays
       '((holiday-fixed 1 1 "Neujahr")
         (holiday-fixed 1 6 "Heilige Drei Könige (BW, BY, ST)")
@@ -47,88 +82,57 @@
         (holiday-easter-etc 49 "Pfingstsonntag")
         (holiday-easter-etc 50 "Pfingstmontag")
         (holiday-easter-etc 60 "Fronleichnam (BW, BY, HE, NW, RP, SL)")
-        (holiday-fixed 8 8 "Friedensfest (Augsburg)")
         (holiday-fixed 8 15 "Mariä Himmelfahrt (BY, SL)")
-        (holiday-fixed 9 20 "Weltkindertag (TH)")
         (holiday-fixed 10 3 "Tag der Deutschen Einheit")
-        (holiday-fixed 10 31 "Reformationstag (BB, HB, HH, MV, NI, SN, ST, SH, TH)")
+        (holiday-fixed 10 31 "Reformationstag")
         (holiday-fixed 11 1 "Allerheiligen (BW, BY, NW, RP, SL)")
-        (holiday-float 11 3 -1 "Buß- und Bettag (SN)" 23)
         (holiday-fixed 12 25 "1. Weihnachtsfeiertag")
         (holiday-fixed 12 26 "2. Weihnachtsfeiertag")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Calendar settings
+;;; ICS calendar setup
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq calendar-week-start-day 1)  ; Monday
-(setq calendar-day-name-array
-      ["Sonntag" "Montag" "Dienstag" "Mittwoch" 
-       "Donnerstag" "Freitag" "Samstag"])
-(setq calendar-month-name-array
-      ["Januar" "Februar" "März" "April" "Mai" "Juni"
-       "Juli" "August" "September" "Oktober" "November" "Dezember"])
-
-;;;Local calendar file path
 (defvar my-local-calendar-file 
   (expand-file-name "calendar/simon@knogler.dev.ics" user-emacs-directory)
-  "Path to local ICS calendar file for syncing.")
-  
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Calendar setup
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  "Path to local ICS calendar file.")
 
-;; Ensure calendar directory exists
+;; Ensure calendar exists
 (unless (file-exists-p (file-name-directory my-local-calendar-file))
   (make-directory (file-name-directory my-local-calendar-file) t))
 
-;; Create empty calendar file if it doesn't exist
 (unless (file-exists-p my-local-calendar-file)
   (with-temp-file my-local-calendar-file
-    (insert "BEGIN:VCALENDAR\n")
-    (insert "VERSION:2.0\n")
-    (insert "PRODID:-//My Calendar//EN\n")
+    (insert "BEGIN:VCALENDAR\nVERSION:2.0\n")
+    (insert "PRODID:-//Emacs Calendar//EN\n")
     (insert "END:VCALENDAR\n")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Functions - CORRECT NEW NAMING CONVENTION (calfw- prefix)
+;;; Calendar functions
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun my-calendar-open ()
-  "Open calendar view with local calendar."
+  "Open calendar with local ICS file."
   (interactive)
   (calfw-open-calendar-buffer
    :contents-sources
-   (list
-    (calfw-ical-create-source "Lokal" my-local-calendar-file "Blue"))
+   (list (calfw-ical-create-source "Lokal" my-local-calendar-file "DeepSkyBlue"))
    :view 'month))
-
-(defun my-calendar-with-org ()
-  "Open calendar with org-mode."
+   
+(defun my-calendar-agenda ()
+  "Open org-agenda."
   (interactive)
-  (calfw-org-open-calendar))
-
-(defun my-calendar-both ()
-  "Open calendar with both ICS and org sources."
-  (interactive)
-  (calfw-open-calendar-buffer
-   :contents-sources
-   (list
-    (calfw-org-create-source "Green")
-    (calfw-ical-create-source "Lokal" my-local-calendar-file "Blue"))
-   :view 'month))
+  (org-agenda nil "a"))
 
 (defun my-calendar-sync ()
-  "Sync local calendar file with external service."
+  "Sync local calendar file."
   (interactive)
-  (message "Syncing calendar: %s" my-local-calendar-file)
-  (message "Calendar sync complete"))
+  (message "Calendar sync: %s" my-local-calendar-file)
+  (message "Sync complete!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -137,8 +141,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (global-set-key (kbd "C-c c") 'my-calendar-open)
-(global-set-key (kbd "C-c o") 'my-calendar-with-org)
-(global-set-key (kbd "C-c b") 'my-calendar-both)
+(global-set-key (kbd "C-c a") 'my-calendar-agenda)
 (global-set-key (kbd "C-c C-s") 'my-calendar-sync)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Menu bar
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(with-eval-after-load 'menu-bar
+  (defvar knoglerdev-calendar-menu (make-sparse-keymap "Calendar"))
+  
+  (define-key knoglerdev-calendar-menu [calendar-sync]
+    '(menu-item "Sync Calendar" my-calendar-sync
+                :help "Sync calendar (C-c C-s)"))
+  
+  (define-key knoglerdev-calendar-menu [separator] '(menu-item "--"))
+  
+  (define-key knoglerdev-calendar-menu [calendar-agenda]
+    '(menu-item "Org Agenda" my-calendar-agenda
+                :help "Open org-agenda (C-c a)"))
+
+  (define-key knoglerdev-calendar-menu [calendar-open]
+    '(menu-item "ICS Calendar" my-calendar-open
+                :help "ICS calendar (C-c c)"))
+  
+  (define-key-after global-map [menu-bar calendar]
+    (cons "Calendar" knoglerdev-calendar-menu)
+    'workspace))
+
 (provide 'calendar)
+;;; calendar.el ends here
