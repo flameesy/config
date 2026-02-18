@@ -1,23 +1,5 @@
 ;;; base.el --- Base configuration  -*- lexical-binding: t; -*-
 ;;;
-;;; The consult package in particular has a vast number of functions that you
-;;; can use as replacements to what Emacs provides by default. Please see the
-;;; consult documentation for more information and help:
-;;;
-;;;     https://github.com/minad/consult
-;;;
-;;; In particular, many users may find `consult-line' to be more useful to them
-;;; than isearch, so binding this to `C-s' might make sense. This is left to the
-;;; user to configure, however, as isearch and consult-line are not equivalent.
-;;;
-;;; Contents:
-;;;
-;;;  - Motion aids
-;;;  - Power-ups: Embark and Consult
-;;;  - Minibuffer and completion
-;;;  - Treemacs
-;;;  - Misc. editing enhancements
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Motion aids
