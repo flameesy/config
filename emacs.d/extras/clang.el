@@ -1,27 +1,14 @@
 ;;; clang.el --- C and C++ development setup  -*- lexical-binding: t; -*-
 ;;;
 ;;; Voraussetzungen:
-;;;
-;;;   LSP (clangd):
-;;;     sudo apt install clangd        (Debian/Ubuntu)
-;;;     sudo pacman -S clang           (Arch)
-;;;     brew install llvm              (macOS)
-;;;
+;;;   LSP (clangd)
 ;;;   clangd braucht eine compile_commands.json im Projektroot.
 ;;;   Erzeugen mit CMake:   cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 ;;;   Oder mit bear:        bear -- make
 ;;;
 ;;;   Tree-sitter Grammatiken einmalig installieren:
 ;;;     M-x clang-setup-install-grammars
-
-;;; Contents:
 ;;;
-;;;  - Tree-sitter Grammatiken
-;;;  - C/C++ Grundeinstellungen
-;;;  - lsp-mode + lsp-ui (mit c-ts-mode Registrierung)
-;;;  - cmake-mode
-;;;  - Debugging mit gdb-mi
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Tree-sitter Grammatiken installieren
