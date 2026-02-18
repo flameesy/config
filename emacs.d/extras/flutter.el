@@ -1,20 +1,8 @@
 ;;; flutter.el --- Flutter/Dart setup (lsp-mode + lsp-dart + flutter.el + project.el)  -*- lexical-binding: t; -*-
 ;;;
-;;; Prereqs (must be installed / done on the machine):
-;;;
-;;; 1) Flutter SDK installed and on PATH (Windows + Linux):
+;;; Flutter SDK installed and on PATH (Windows + Linux):
 ;;;    - `flutter --version` works in a normal terminal
 ;;;    - ideally also: `dart --version`
-;;;
-;;; 2) From time to time run (especially after Flutter updates):
-;;;    - `flutter doctor`
-;;;
-;;; 3) Emacs packages (MELPA):
-;;;    - dart-mode
-;;;    - lsp-mode
-;;;    - lsp-ui (optional but recommended)
-;;;    - lsp-dart
-;;;    - flutter
 
 (require 'cl-lib)
 
@@ -122,7 +110,7 @@
   (cl-defmethod project-compilation-command ((project (head flutter)))
     "flutter run"))
 
-;; Flutter menu (Menu Bar) — robust (only adds entries that exist)
+;; Flutter menu (Menu Bar) â€” robust (only adds entries that exist)
 (with-eval-after-load 'menu-bar
   (defvar knoglerdev-flutter-menu (make-sparse-keymap "Flutter")
     "Menu for Flutter/Dart helpers.")
@@ -203,3 +191,4 @@
 
 (provide 'flutter)
 ;;; flutter.el ends here
+
