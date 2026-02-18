@@ -1,22 +1,8 @@
 ;;; dev.el --- General development setup  -*- lexical-binding: t; -*-
 ;;;
 ;;; This will try to use tree-sitter modes for many languages. Please run
-;;;
 ;;;   M-x treesit-install-language-grammar
 ;;;
-;;; Before trying to use a treesit mode.
-
-;;; Contents:
-;;;
-;;;  - Built-in config for developers
-;;;  - Version Control
-;;;  - Common file types
-;;;  - Eglot, the built-in LSP client for Emacs
-;;;  - Templating
-;;;  - Rainbow delimiters
-;;;  - Todo highlighting
-;;;  - Language-specific packages
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;;   Built-in config for developers
