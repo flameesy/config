@@ -33,10 +33,15 @@
   (setq dashboard-vertically-center-content t)
   
   ;; Items to show - reordered by workflow priority
-  (setq dashboard-items '((agenda    . 10)   ; Most important: what's due
-                          (projects  . 8)    ; Active projects
-                          (recents   . 7)    ; Recently edited
-                          (bookmarks . 5)))  ; Important locations
+  (setq dashboard-items
+      (if (and (boundp 'org-agenda-files) org-agenda-files)
+          '((agenda   . 10)
+            (projects . 8)
+            (recents  . 7)
+            (bookmarks . 5))
+          '((projects  . 8)
+            (recents   . 7)
+            (bookmarks . 5))))
   
   ;; Show icons
   (setq dashboard-display-icons-p t)
@@ -50,10 +55,12 @@
   
   ;; Show init info
   (setq dashboard-set-init-info t)
-  (setq dashboard-init-info 
+  ;; `:init' Block - after-init-time Guard:
+  (setq dashboard-init-info
+      (lambda ()   ; <-- als Lambda, wird NACH init ausgewertet
         (format "Ready in %.2f seconds with %d packages"
                 (float-time (time-subtract after-init-time before-init-time))
-                (length package-activated-list)))
+                (length package-activated-list))))
   
   ;; Custom footer with productivity tips
   (setq dashboard-footer-messages 
