@@ -214,14 +214,14 @@ If the new path's directories does not exist, create them."
 ;; UI/UX enhancements (Treemacs, minibuffer, autocompletion interfaces...)
 (load-file (expand-file-name "extras/base.el" user-emacs-directory))
 
+;; Org-mode configuration
+(load-file (expand-file-name "extras/org.el" user-emacs-directory))
+
 ;; Dashboard, essential for looksmaxxing
 (load-file (expand-file-name "extras/dashboard.el" user-emacs-directory))
 
 ;; Packages for software development (language-specific in subfiles)
 (load-file (expand-file-name "extras/dev.el" user-emacs-directory))
-
-;; Org-mode configuration
-(load-file (expand-file-name "extras/org.el" user-emacs-directory))
 
 ;; Workspace setup
 (load-file (expand-file-name "extras/workspace.el" user-emacs-directory))
