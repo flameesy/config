@@ -1,0 +1,97 @@
+#+title: Org Timetracking – Quick Start (Today)
+#+author: Anna
+#+startup: overview
+
+* Goal
+You want to time track like this (searchable, editable, Notepad++-style):
+
+- 08:00-08:20: KUNDE
+  Meeting zur Absprache Webshop mit mg
+  Ticket: JIRA-1234
+
+Your config provides an Org Capture template = *tl* that automatically writes into a monthly file:
+
+~/Documents/org/work-YYYY-MM.org
+
+and files entries under today’s date (datetree).
+
+* 0) One-time check (takes 30 seconds)
+1. Make sure your updated =org.el= is loaded (restart Emacs or evaluate the file).
+2. Press: =C-c c=
+3. Confirm you see a capture option:
+   - =tl= :: Time log (monthly, multiline)
+
+If you don’t see it, your config wasn’t loaded or there’s an error in the init sequence.
+
+* 1) Create your first timelog entry (right now)
+1. Press: =C-c c=
+2. Choose: =tl=
+3. Fill the prompts:
+   - *From*: e.g. =08:00=
+   - *To*: e.g. =08:20=
+   - *Context*: e.g. =KUNDE= or company name or =misc=
+4. You land in the description line (indented). Type what you did, e.g.:
+   - =Meeting zur Absprache Webshop mit mg=
+5. *Ticket (optional)*:
+   - enter e.g. =JIRA-1234= or =GDI-...=
+   - or leave blank
+6. Save capture: =C-c C-c=
+
+Result (example):
+
+- 08:00-08:20: KUNDE
+  Meeting zur Absprache Webshop mit mg
+  Ticket: JIRA-1234
+
+* 2) Add entries throughout the day (the habit)
+Every time you switch tasks or finish a chunk of work:
+
+- =C-c c tl= → fill times/context → type description → =C-c C-c=
+
+If you’re in a hurry or things overlap:
+- write a rough entry quickly
+- correct the times later (it’s plain text)
+
+* 3) Where your entries end up
+They go to the current month file:
+
+~/Documents/org/work-YYYY-MM.org
+
+and are filed under today’s date heading (datetree), e.g.:
+
+* 2026-02-18 Tue
+- 08:00-08:20: KUNDE
+  ...
+
+* 4) Editing / fixing overlaps
+Open the current month file and just edit the text.
+
+Useful list-item editing in Org:
+- =M-RET=        create a new list item
+- =M-up/down=    move the current list item up/down
+- =M-left/right= change indentation level
+
+* 5) Searching your history
+**Search across all monthly logs (recommended)**
+- =C-c a s=
+- type a search term (company name, =KUNDE=, =JIRA-1234=, a person, etc.)
+
+**Search within the current month file**
+- =C-s= to search forward
+- =C-M-s= for regexp search (handy for time patterns)
+
+* 6) Suggested lightweight routine (works well in practice)
+**Morning**
+- Start logging from the first meaningful work block.
+
+**During the day**
+- Log whenever you switch context or finish a task chunk.
+
+**End of day (2 minutes)**
+- Quick scan of today’s section:
+  - fix overlapping times if needed
+  - ensure important items have a searchable keyword (company, project, ticket)
+
+* Notes / Tips
+- Consistency helps: if you always use the same company spelling and ticket format, searching later is effortless.
+- You don’t need perfect structure. The datetree + consistent lines are already a huge win over scattered files.
