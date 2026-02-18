@@ -29,16 +29,6 @@
            knoglerdev-default-dev-directory
            (file-name-nondirectory (directory-file-name knoglerdev-default-dev-directory))))))
     
-    ;; EMMS below treemacs
-    (when (and (featurep 'emms) (get-buffer "*EMMS Playlist*"))
-      (let ((treemacs-window (selected-window)))
-        (select-window treemacs-window)
-        (let ((emms-window (split-window-below -10)))
-          (select-window emms-window)
-          (switch-to-buffer "*EMMS Playlist*")
-          (window-resize emms-window (- 10 (window-height emms-window)))
-          (select-window treemacs-window))))
-    
     (other-window 1))
   
   ;; RIGHT: Dashboard + bottom shell
@@ -147,8 +137,6 @@
   (define-key-after global-map [menu-bar workspace]
     (cons "Workspace" knoglerdev-workspace-menu)
     'tools))
-
-(provide 'workspace)
 
 (provide 'workspace)
 
