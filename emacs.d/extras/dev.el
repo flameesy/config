@@ -173,5 +173,8 @@
 ;; Web (React, Tailwind, TSX)
 ;(load-file (expand-file-name "extras/web.el" user-emacs-directory))
 
+;; Flutter
+;(load-file (expand-file-name "extras/flutter.el" user-emacs-directory))
+
 ;; C/C++
 ;(load-file (expand-file-name "extras/clang.el" user-emacs-directory))
