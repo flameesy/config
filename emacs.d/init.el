@@ -267,36 +267,6 @@ If the new path's directories does not exist, create them."
 ;; Org-mode configuration
 ;(load-file (expand-file-name "extras/org.el" user-emacs-directory))
 
-;; Email configuration in Emacs
-;(load-file (expand-file-name "extras/email.el" user-emacs-directory))
-
-;; Calendar
-;;(load-file (expand-file-name "extras/calendar.el" user-emacs-directory))
-
-;; Media player
-;; WARNING: needs mpv installed
-;;(load-file (expand-file-name "extras/media.el" user-emacs-directory))
-
 ;; Workspace setup
 (load-file (expand-file-name "extras/workspace.el" user-emacs-directory))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;   Custom settings (auto-generated)
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq gc-cons-threshold (or knoglerdev--initial-gc-threshold 800000))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
