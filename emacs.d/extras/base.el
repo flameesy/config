@@ -188,6 +188,7 @@
   (treemacs-filewatch-mode t)
   (treemacs-fringe-indicator-mode t)
   (treemacs-git-mode 'simple)
+  (treemacs-git-commit-diff-mode t)
   
   :bind
   (("<f8>" . treemacs)
