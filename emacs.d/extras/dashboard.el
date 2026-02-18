@@ -1,8 +1,8 @@
-;;; dashboard.el --- Enhanced Solo Developer Dashboard  -*- lexical-binding: t; -*-
-
+;;; dashboard.el --- Enhanced Developer Dashboard  -*- lexical-binding: t; -*-
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   Dashboard - Optimized for Solo Developer Workflow
+;;;   Dashboard - Optimized for Developer Workflow
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -22,7 +22,7 @@
                   (cond ((< hour 12) "Good Morning")
                         ((< hour 18) "Good Afternoon")
                         (t "Good Evening")))
-                "Let's have a great time"))
+                "Have a good day!"))
   
   ;; Set the banner
   (setq dashboard-startup-banner 
@@ -66,7 +66,7 @@
   (setq dashboard-week-agenda t)
   (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
   
-  ;; Custom sections for solo developer workflow
+  ;; Sections
   (setq dashboard-startupify-list
         '(dashboard-insert-banner
           dashboard-insert-newline
@@ -89,30 +89,21 @@
             "Browse repositories"
             (lambda (&rest _) (browse-url "https://github.com/flameesy")))
            (,""
-            "Projects"
-            "Switch project"
-            (lambda (&rest _) (call-interactively 'project-switch-project)))
-           (,""
             "Notes"
             "Quick note"
-            (lambda (&rest _) (org-capture))))
-          
-          ;; Row 2: Communication & Management
-          ((,""
-            "Email"
-            "Check messages"
-            (lambda (&rest _) (call-interactively 'notmuch)))  ; or mu4e
-           (,""
+            (lambda (&rest _) (org-capture)))
+		   (,""
             "Agenda"
             "Full agenda view"
-            (lambda (&rest _) (org-agenda nil "a")))
+            (lambda (&rest _) (org-agenda nil "a"))))
+          
+          ;; Row 2: Communication & Management
+          (
            (""
             "Time"
             "Clock in/out"
-            (lambda (&rest _) (org-clock-goto))))
-          
-          ;; Row 3: Maintenance & Tools
-          ((,""
+            (lambda (&rest _) (org-clock-goto)))
+           (,""
             "Update"
             "Update packages"
             (lambda (&rest _) (package-refresh-contents)))

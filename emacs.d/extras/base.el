@@ -45,8 +45,7 @@
 (use-package embark-consult
   :ensure t)
 
-;; Embark: supercharged context-dependent menu; kinda like a
-;; super-charged right-click.
+;; Embark: supercharged context-dependent menu
 (use-package embark
   :ensure t
   :demand t
@@ -171,7 +170,6 @@
   :ensure t
   :if (display-graphic-p))
 
-;; Treemacs: VSCode-like file tree
 (use-package treemacs
   :ensure t
   :defer t
@@ -201,12 +199,12 @@
   :config
   (treemacs-load-theme "nerd-icons"))
 
-;; Optional: Project.el integration
+;; Project.el integration
 (use-package treemacs-projectile
   :ensure t
   :after (treemacs projectile))
 
-;; Optional: Magit integration (for git status colors)
+;; Magit integration (for git status colors)
 (use-package treemacs-magit
   :ensure t
   :after (treemacs magit))
