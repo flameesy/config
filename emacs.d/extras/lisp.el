@@ -176,12 +176,12 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun my/sly-eval-buffer ()
+(defun knoglerdev/sly-eval-buffer ()
   "Evaluate the entire buffer in SLY."
   (interactive)
   (sly-eval-region (point-min) (point-max)))
 
-(defun my/sly-load-project ()
+(defun knoglerdev/sly-load-project ()
   "Load the current ASDF project."
   (interactive)
   (when (sly-connected-p)
@@ -189,8 +189,8 @@
 
 ;; Keybindings for custom functions
 (with-eval-after-load 'sly
-  (define-key sly-mode-map (kbd "C-c C-b") 'my/sly-eval-buffer)
-  (define-key sly-mode-map (kbd "C-c C-l") 'my/sly-load-project))
+  (define-key sly-mode-map (kbd "C-c C-b") 'knoglerdev/sly-eval-buffer)
+  (define-key sly-mode-map (kbd "C-c C-l") 'knoglerdev/sly-load-project))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -199,7 +199,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Quick function to define a package at the top of a file
-(defun my/insert-package-definition ()
+(defun knoglerdev/insert-package-definition ()
   "Insert a basic Common Lisp package definition."
   (interactive)
   (insert "(defpackage #:my-package\n"
@@ -207,14 +207,14 @@
           "  (:export))\n\n"
           "(in-package #:my-package)\n\n"))
 
-(global-set-key (kbd "C-c l p") 'my/insert-package-definition)
+(global-set-key (kbd "C-c l p") 'knoglerdev/insert-package-definition)
 
 ;; Lisp development menu
 (with-eval-after-load 'menu-bar
   (defvar knoglerdev-lisp-menu (make-sparse-keymap "Lisp"))
   
   (define-key knoglerdev-lisp-menu [insert-package]
-    '(menu-item "Insert Package Definition" my/insert-package-definition
+    '(menu-item "Insert Package Definition" knoglerdev/insert-package-definition
                 :help "Insert Common Lisp package definition (C-c l p)"))
   
   (define-key-after global-map [menu-bar lisp-dev]

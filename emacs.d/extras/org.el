@@ -12,7 +12,7 @@
 (setq org-roam-index-file (expand-file-name "index.org" org-roam-directory))
 
 ;; Helper: monthly work log file path
-(defun anna/org-work-monthly-file ()
+(defun knoglerdev/org-work-monthly-file ()
   "Return absolute path of the current monthly work log file."
   (expand-file-name (format-time-string "work-%Y-%m.org") org-directory))
 
@@ -51,7 +51,7 @@
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun anna/org--maybe-ticket-line (s)
+(defun knoglerdev/org--maybe-ticket-line (s)
   "Return an indented ticket line for timelog entries, or empty string."
   (let ((tix (string-trim (or s ""))))
     (if (string-empty-p tix)
@@ -103,8 +103,8 @@
 
           ;; Monthly timelog (your Notepad++-style, but organized)
           ("tl" "Time log (monthly, multiline)" item
-           (file+olp+datetree ,(lambda () (anna/org-work-monthly-file)))
-           "- %^{From}-%^{To}: %^{Context}\n  %?\n%(anna/org--maybe-ticket-line \"%^{Ticket (optional, Jira/GDI/blank)}\")"
+           (file+olp+datetree ,(lambda () (knoglerdev/org-work-monthly-file)))
+           "- %^{From}-%^{To}: %^{Context}\n  %?\n%(knoglerdev/org--maybe-ticket-line \"%^{Ticket (optional, Jira/GDI/blank)}\")"
            :empty-lines 1)
 
           ;; Structured work captures (keep using work.org as hub)

@@ -146,7 +146,7 @@
 (global-set-key (kbd "C-c h") 'dashboard-open)  ; Quick return to dashboard
 
 ;; Optional: Add a dashboard item counter in mode-line
-(defun my/dashboard-mode-line ()
+(defun knoglerdev/dashboard-mode-line ()
   "Custom mode line for dashboard."
   (setq mode-line-format
         '("%e" mode-line-front-space
@@ -156,10 +156,10 @@
           (:eval (format "%d open buffers" (length (buffer-list))))
           mode-line-end-spaces)))
 
-(add-hook 'dashboard-mode-hook 'my/dashboard-mode-line)
+(add-hook 'dashboard-mode-hook 'knoglerdev/dashboard-mode-line)
 
 ;; Optional: Dashboard widgets for solo dev productivity
-(defun my/dashboard-insert-quick-stats (list-size)
+(defun knoglerdev/dashboard-insert-quick-stats (list-size)
   "Insert productivity stats."
   (dashboard-insert-heading "Quick Stats"
                            (nerd-icons-mdicon "nf-md-chart_line")
@@ -172,7 +172,7 @@
   (insert "\n"))
 
 ;; Add the custom widget (optional)
-;; (add-to-list 'dashboard-item-generators '(quick-stats . my/dashboard-insert-quick-stats))
+;; (add-to-list 'dashboard-item-generators '(quick-stats . knoglerdev/dashboard-insert-quick-stats))
 ;; (add-to-list 'dashboard-items '(quick-stats) t)
 
 ;; Dashboard menu

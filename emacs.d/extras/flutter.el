@@ -54,13 +54,13 @@
   (lsp-dart-flutter-outline t))
 
 ;; Format on save via LSP (safe: ignore errors)
-(defun anna/dart-lsp-format-on-save ()
+(defun knoglerdev/dart-lsp-format-on-save ()
   "Format Dart buffers on save using LSP."
   (when (and (eq major-mode 'dart-mode)
              (bound-and-true-p lsp-mode))
     (ignore-errors (lsp-format-buffer))))
 
-(add-hook 'before-save-hook #'anna/dart-lsp-format-on-save)
+(add-hook 'before-save-hook #'knoglerdev/dart-lsp-format-on-save)
 
 ;; ---------------------------------------------------------------------------
 ;; Flutter commands (run/hot-reload/tests/device)
@@ -96,14 +96,14 @@
   (cl-defmethod project-root ((project (head flutter)))
     (cdr project))
 
-  (defun anna/project-try-flutter (dir)
+  (defun knoglerdev/project-try-flutter (dir)
     "Detect a Flutter project by searching for pubspec.yaml above DIR."
     (let ((root (locate-dominating-file dir "pubspec.yaml")))
       (when root
         (cons 'flutter (expand-file-name root)))))
 
   ;; Make it available (prepend-ish). add-hook adds to front by default when APPEND is nil.
-  (add-hook 'project-find-functions #'anna/project-try-flutter)
+  (add-hook 'project-find-functions #'knoglerdev/project-try-flutter)
 
   ;; Default compile command for Flutter projects.
   ;; This affects `C-x p c` (project-compile) inside Flutter projects.
