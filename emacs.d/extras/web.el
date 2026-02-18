@@ -1,51 +1,29 @@
 ;;;; web.el --- Modern React/TypeScript development setup -*- lexical-binding: t; -*-
-
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Setup Instructions
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; STEP 1: Tree-sitter Grammatiken installieren
+;;;
+;; STEP 1: Tree-sitter grammars
 ;;   Run: M-x web-setup-install-grammars
-;;   Das lädt und kompiliert die Parser für TypeScript, TSX, JSON, etc.
-;;
-;; STEP 2: LSP Server installieren
+;; STEP 2: LSP server
 ;;   Run: M-x lsp-install-server
-;;   Wähle: ts-ls (TypeScript)
-;;   Nochmal für: eslint
-;;   Nochmal für: tailwindcss (optional)
-;;
-;; STEP 3: (Optional aber empfohlen) emacs-lsp-booster installieren
-;;   Verbessert LSP-Performance durch asynchrones JSON-Parsing.
+;;   Wähle: ts-ls; eslint; tailwindcss (optional)
+;; STEP 3: emacs-lsp-booster
 ;;   https://github.com/blahgeek/emacs-lsp-booster
-;;
-;;   Linux/macOS:  cargo install --git https://github.com/blahgeek/emacs-lsp-booster
-;;   Windows:      Binary von der Releases-Seite herunterladen
-;;   Danach sicherstellen, dass 'emacs-lsp-booster' im PATH ist.
-;;
-;; STEP 4: Prettier installieren (für Code-Formatierung)
-;;   npm install -g prettier
-;;   Oder projekt-lokal (empfohlen)
-;;
+;; STEP 4: Prettier
+;;   projekt-lokal (empfohlen)
 ;; STEP 5: LSP-Gesundheit prüfen
 ;;   Run: M-x lsp-doctor
-;;
-;; USAGE:
-;;   - .ts, .tsx, .js, .jsx öffnen → LSP startet automatisch
-;;   - C-c l         = LSP Prefix
-;;   - C-c C-d       = Dokumentation für Symbol under point
-;;   - C-c o         = Combobulate Prefix (strukturelles Editieren)
-;;   - M-n / M-p     = Nächster/vorheriger Fehler
-;;   - Speichern formatiert automatisch mit Prettier
-
+;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   Tree-sitter: Grammatiken + Dateiendungen
+;;;   Tree-sitter: Grammar and file endings
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Hilfsfunktion zum Installieren aller nötigen Grammatiken
 (defun web-setup-install-grammars ()
   "Installiert Tree-sitter Grammatiken für Web-Entwicklung, falls nicht vorhanden."
   (interactive)
@@ -85,7 +63,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   Completion mit Corfu
+;;;   Completion with Corfu
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -113,7 +91,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   Linting mit Flycheck
+;;;   Linting with Flycheck
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,7 +104,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   LSP Mode
+;;;   LSP mode
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -254,7 +232,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;   Prettier Formatierung mit Apheleia
+;;;   Prettier formatting
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
