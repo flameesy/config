@@ -60,7 +60,7 @@
             (switch-to-buffer eshell-buffer)
           (eshell)))
       
-      (window-resize bottom-window (- 6 (window-height bottom-window))))
+      (window-resize bottom-window (- 20 (window-height bottom-window))))
     
     (select-window main-window)))
 
@@ -151,4 +151,5 @@
 (provide 'workspace)
 
 (provide 'workspace)
+
 ;;; workspace.el ends here
