@@ -7,10 +7,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Package initialization
-;;
-;; You can simply uncomment the following if you'd like to get started with
-;; MELPA packages quickly:
-;;
  (with-eval-after-load 'package
    (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
@@ -206,48 +202,8 @@ If the new path's directories does not exist, create them."
   ; ;; All customisations here.
   ; (setq modus-themes-mixed-fonts t)
   ; (setq modus-themes-italic-constructs t)
-
   ; ;; Finally, load your theme of choice
   ; (modus-themes-load-theme 'ef-kassio))
-;;; List of available ef-themes:
-;;; Light Themes:
-;;;   ef-arbutus
-;;;   ef-cyprus
-;;;   ef-day
-;;;   ef-deuteranopia-light
-;;;   ef-duo-light
-;;;   ef-eagle
-;;;   ef-elea-light
-;;;   ef-frost
-;;;   ef-kassio
-;;;   ef-light
-;;;   ef-maris-light
-;;;   ef-melissa-light
-;;;   ef-orange
-;;;   ef-reverie
-;;;   ef-spring
-;;;   ef-summer
-;;;   ef-trio-light
-;;;   ef-tritanopia-light
-;;; Dark Themes:
-;;;   ef-autumn
-;;;   ef-bio
-;;;   ef-cherie
-;;;   ef-dark
-;;;   ef-deuteranopia-dark
-;;;   ef-dream
-;;;   ef-duo-dark
-;;;   ef-elea-dark
-;;;   ef-fig
-;;;   ef-maris-dark
-;;;   ef-melissa-dark
-;;;   ef-night
-;;;   ef-owl
-;;;   ef-rosa
-;;;   ef-symbiosis
-;;;   ef-trio-dark
-;;;   ef-tritanopia-dark
-;;;   ef-winter
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
