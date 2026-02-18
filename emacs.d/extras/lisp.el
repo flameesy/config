@@ -1,13 +1,5 @@
 ;;; lisp.el --- Common Lisp development stuff  -*- lexical-binding: t; -*-
 ;;
-;; USAGE:
-;; - Open a .lisp file and run: M-x sly
-;; - C-c C-c: Compile defun
-;; - C-c C-k: Compile and load file
-;; - C-c C-z: Switch to REPL
-;; - M-.: Jump to definition
-;; - M-,: Pop back from definition
-;; - C-c C-d h: Hyperspec lookup
 ;;
 ;; Enable SLY REPL in workspace
 (setq knoglerdev-auto-start-sly t)
@@ -32,8 +24,7 @@
   
   ;; Completion style
   (sly-complete-symbol-function 'sly-flex-completions)
-  
-  
+   
   :config
   ;; Better indentation for Common Lisp
   (setq lisp-indent-function 'common-lisp-indent-function)
@@ -229,56 +220,5 @@
   (define-key-after global-map [menu-bar lisp-dev]
     (cons "Lisp" knoglerdev-lisp-menu)
     'dashboard-menu))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Documentation
-;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; Quick reference for keybindings
-;; Add to your help menu with:
-;; (define-key help-map (kbd "l") 'my/lisp-help)
-
-(defun my/lisp-help ()
-  "Show Common Lisp development keybindings."
-  (interactive)
-  (with-help-window "*Common Lisp Help*"
-    (princ "Common Lisp Development with SLY - Quick Reference\n")
-    (princ "=====================================================\n\n")
-    (princ "Starting/Connecting:\n")
-    (princ "  M-x sly              Start SLY and connect to Lisp\n")
-    (princ "  M-x sly-connect      Connect to running Lisp\n\n")
-    (princ "Evaluation:\n")
-    (princ "  C-c C-c              Compile defun at point\n")
-    (princ "  C-c C-k              Compile and load file\n")
-    (princ "  C-c C-b              Evaluate entire buffer\n")
-    (princ "  C-c C-r              Evaluate region\n")
-    (princ "  C-c C-e              Evaluate last expression\n\n")
-    (princ "Navigation:\n")
-    (princ "  M-.                  Jump to definition\n")
-    (princ "  M-,                  Pop back from definition\n")
-    (princ "  C-c C-z              Switch to REPL\n")
-    (princ "  C-c M-z              Sync package in REPL\n\n")
-    (princ "Documentation:\n")
-    (princ "  C-c C-d C-d          Describe symbol\n")
-    (princ "  C-c C-d h            HyperSpec lookup\n")
-    (princ "  C-c h                HyperSpec lookup (alt)\n")
-    (princ "  C-c C-d a            Apropos\n\n")
-    (princ "ASDF/Quicklisp:\n")
-    (princ "  C-c C-a              Load ASDF system\n")
-    (princ "  C-c C-l              Load current project\n\n")
-    (princ "Paredit (Structural Editing):\n")
-    (princ "  C-M-f                Forward sexp\n")
-    (princ "  C-M-b                Backward sexp\n")
-    (princ "  C-M-u                Up sexp\n")
-    (princ "  C-M-d                Down sexp\n")
-    (princ "  M-(                  Wrap with parentheses\n")
-    (princ "  M-[                  Wrap with square brackets\n")
-    (princ "  M-s                  Splice (remove parens)\n")
-    (princ "  M-r                  Raise (replace parent with current)\n\n")
-    (princ "Debugging:\n")
-    (princ "  C-c C-t              Toggle trace\n")
-    (princ "  M-x sly-restart-inferior-lisp  Restart Lisp\n")))
 
 (provide 'lisp)
