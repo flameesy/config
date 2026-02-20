@@ -7,11 +7,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Package initialization
- (with-eval-after-load 'package
-   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+(with-eval-after-load 'package
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 ;; Turn off Welcome Screen
-;(setopt inhibit-splash-screen t)
+;; (setopt inhibit-splash-screen t)
 
 (setopt initial-major-mode 'fundamental-mode)  ; default mode for the *scratch* buffer
 (setopt display-time-default-load-average nil) ; this information is useless for most
@@ -26,7 +26,7 @@
 (savehist-mode)
 
 ;; Move through windows with Ctrl-<arrow keys>
-(windmove-default-keybindings 'control) ; You can use other modifiers here
+(windmove-default-keybindings 'control)
 
 ;; Fix archaic defaults
 (setopt sentence-end-double-space nil)
@@ -41,20 +41,12 @@
   "Return a new file path of a given file path.
 If the new path's directories does not exist, create them."
   (let* ((backupRootDir (concat user-emacs-directory "emacs-backup/"))
-         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath )) ; remove Windows driver letter in path
-         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~") )))
-    (make-directory (file-name-directory backupFilePath) (file-name-directory backupFilePath))
+         (filePath (replace-regexp-in-string "[A-Za-z]:" "" fpath)) ; remove Windows drive letter
+         (backupFilePath (replace-regexp-in-string "//" "/" (concat backupRootDir filePath "~"))))
+    ;; NOTE: Make sure directory exists
+    (make-directory (file-name-directory backupFilePath) t)
     backupFilePath))
 (setopt make-backup-file-name-function 'knoglerdev--backup-file-name)
-
-;; The above creates nested directories in the backup folder. If
-;; instead you would like all backup files in a flat structure, albeit
-;; with their full paths concatenated into a filename, then you can
-;; use the following configuration:
-;; (Run `'M-x describe-variable RET backup-directory-alist RET' for more help)
-;;
-;; (let ((backup-dir (expand-file-name "emacs-backup/" user-emacs-directory)))
-;;   (setopt backup-directory-alist `(("." . ,backup-dir))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -62,19 +54,15 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Show the help buffer after startup (will be sized in workspace setup)
 (add-hook 'after-init-hook 'help-quick)
 
-;; which-key: shows a popup of available keybindings when typing a long key
-;; sequence (e.g. C-x ...)
 (use-package which-key
   :ensure t
   :config
   (which-key-mode))
-  
-;; rg: better ripgrep integration  
+
 (use-package rg
-  :ensure t)  
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -82,29 +70,18 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; For help, see: https://www.masteringemacs.org/article/understanding-minibuffer-completion
-
-(setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
-(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
-(setopt completions-detailed t)                        ; Show annotations
-(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
-(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
-
-(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
-(setopt completions-max-height 20)                     ; This is arbitrary
+(setopt enable-recursive-minibuffers t)
+(setopt completion-cycle-threshold 1)
+(setopt completions-detailed t)
+(setopt tab-always-indent 'complete)
+(setopt completion-styles '(basic initials substring))
+(setopt completion-auto-help 'always)
+(setopt completions-max-height 20)
 (setopt completions-format 'one-column)
 (setopt completions-group t)
-(setopt completion-auto-select 'second-tab)            ; Much more eager
-;(setopt completion-auto-select t)                     ; See `C-h v completion-auto-select' for more possible values
+(setopt completion-auto-select 'second-tab)
 
-(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
-
-;; For a fancier built-in completion option, try ido-mode,
-;; icomplete-vertical, or fido-mode. See also the file extras/base.el
-
-;(icomplete-vertical-mode)
-;(fido-vertical-mode)
-;(setopt icomplete-delay-completions-threshold 4000)
+(keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -112,42 +89,31 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Mode line information
-(setopt line-number-mode t)                        ; Show current line in modeline
-(setopt column-number-mode t)                      ; Show column as well
+(setopt line-number-mode t)
+(setopt column-number-mode t)
 
-(setopt x-underline-at-descent-line nil)           ; Prettier underlines
-(setopt switch-to-buffer-obey-display-actions t)   ; Make switching buffers more consistent
+(setopt x-underline-at-descent-line nil)
+(setopt switch-to-buffer-obey-display-actions t)
 
-(setopt show-trailing-whitespace nil)      ; By default, don't underline trailing spaces
-(setopt indicate-buffer-boundaries 'left)  ; Show buffer top and bottom in the margin
+(setopt show-trailing-whitespace nil)
+(setopt indicate-buffer-boundaries 'left)
 
-;; Enable horizontal scrolling
 (setopt mouse-wheel-tilt-scroll t)
 (setopt mouse-wheel-flip-direction t)
 
-;; Ggood to know
-;; (setopt indent-tabs-mode nil)
 (setopt tab-width 2)
 
-;; Misc. UI tweaks
-(blink-cursor-mode -1)                                ; Steady cursor
-(pixel-scroll-precision-mode)                         ; Smooth scrolling
+(blink-cursor-mode -1)
+(pixel-scroll-precision-mode 1)
 
-;; Use common keystrokes by default
-(cua-mode)
-
-;; For terminal users, make the mouse more useful
+(cua-mode 1)
 (xterm-mouse-mode 1)
 
-;; Display line numbers in programming mode
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setopt display-line-numbers-width 3)           ; Set a minimum width
+(setopt display-line-numbers-width 3)
 
-;; Nice line wrapping when working with text
 (add-hook 'text-mode-hook 'visual-line-mode)
 
-;; Modes to highlight the current line with
 (let ((hl-line-hooks '(text-mode-hook prog-mode-hook)))
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
@@ -157,26 +123,106 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Show the tab-bar as soon as tab-bar functions are invoked
-(setopt tab-bar-show 1)
+;; Keep tab-bar enabled (can be used as workspaces), but don't show it by default
 (tab-bar-mode 1)
+(setopt tab-bar-show nil)
+
 (setq tab-bar-new-tab-choice "*dashboard*")
-(setq tab-bar-close-button-show nil)  ; Cleaner look
+(setq tab-bar-close-button-show nil)
 (setq tab-bar-new-button-show nil)
 
-;; Better tab switching
 (global-set-key (kbd "C-c w 1") (lambda () (interactive) (tab-bar-select-tab 1)))
 (global-set-key (kbd "C-c w 2") (lambda () (interactive) (tab-bar-select-tab 2)))
 (global-set-key (kbd "C-c w 3") (lambda () (interactive) (tab-bar-select-tab 3)))
-(global-set-key (kbd "C-c w n") 'tab-bar-new-tab)
-(global-set-key (kbd "C-c w c") 'tab-bar-close-tab)
+(global-set-key (kbd "C-c w n") #'tab-bar-new-tab)
+(global-set-key (kbd "C-c w c") #'tab-bar-close-tab)
 
-;; Add the time to the tab-bar, if visible
 (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
 (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
 (setopt display-time-format "%a %F %T")
 (setopt display-time-interval 1)
-(display-time-mode)
+(display-time-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;   VSCode Tabs (centaur-tabs) + project.el + consult/embark friendly
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(use-package centaur-tabs
+  :ensure t
+  :demand t
+  :custom
+  (centaur-tabs-style "bar")
+  (centaur-tabs-height 28)
+  (centaur-tabs-set-bar 'over)
+  (centaur-tabs-set-icons t)
+  ;; Du nutzt in base.el nerd-icons, nicht all-the-icons.
+  ;; Daher hier auf 'nerd-icons stellen (oder nil, wenn du keine Icons willst).
+  (centaur-tabs-icon-type 'nerd-icons)
+  (centaur-tabs-set-modified-marker t)
+  (centaur-tabs-modified-marker "●")
+  (centaur-tabs-close-button "×")
+  (centaur-tabs-show-new-tab-button nil)
+  (centaur-tabs-cycle-scope 'tabs)
+  (centaur-tabs-enable-key-bindings nil)
+  :config
+  (centaur-tabs-mode 1)
+
+  ;; Native-comp warning workaround (harmlos, aber so ist es clean)
+  (declare-function centaur-tabs-2str "centaur-tabs")
+
+  ;; --- Grouping via project.el ---------------------------------------------
+  (require 'project)
+
+  (defun knoglerdev/project-name ()
+    "Return current project name via project.el or nil."
+    (when-let ((pr (project-current nil)))
+      (file-name-nondirectory (directory-file-name (project-root pr)))))
+
+  (defun knoglerdev/centaur-tabs-buffer-groups ()
+    "Group buffers by project.el project."
+    (list
+     (cond
+      ((string-prefix-p "*" (buffer-name)) "Emacs")
+      ((knoglerdev/project-name))
+      (t "No Project"))))
+
+  (setq centaur-tabs-buffer-groups-function #'knoglerdev/centaur-tabs-buffer-groups)
+
+  ;; --- Hide some buffers from tabs -----------------------------------------
+  (defun knoglerdev/centaur-tabs-hide-tab (bufname)
+    "Non-nil if BUFNAME should be hidden from centaur-tabs."
+    (let ((name bufname))
+      (or
+       (string-prefix-p " " name)
+       (with-current-buffer (get-buffer name)
+         (derived-mode-p
+          'completion-list-mode
+          'help-mode
+          ;; wenn du Dired als Tab willst: nimm 'dired-mode hier raus
+          'dired-mode)))))
+
+  (setq centaur-tabs-hide-tabs-hooks '(knoglerdev/centaur-tabs-hide-tab))
+
+  ;; Terminal: aus
+  (when (not (display-graphic-p))
+    (centaur-tabs-mode -1))
+
+  ;; “Neuer Tab” = neuer Buffer
+  (defun knoglerdev/new-empty-tab ()
+    "Create a new empty buffer and switch to it (shows as a centaur-tab)."
+    (interactive)
+    (switch-to-buffer (generate-new-buffer "untitled"))
+    (fundamental-mode))
+
+  :bind
+  (("C-<prior>" . centaur-tabs-backward)
+   ("C-<next>"  . centaur-tabs-forward)
+   ("C-c t g"   . centaur-tabs-switch-group)
+   ("C-c t l"   . centaur-tabs-list-tabs)
+   ("C-c t n"   . knoglerdev/new-empty-tab)
+   ("C-c t w"   . kill-current-buffer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -184,26 +230,8 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Add Theme Path 
 (add-to-list 'custom-theme-load-path (expand-file-name "themes/" user-emacs-directory))
-;; Possible Themes without ef-themes
 (load-theme 'nord t)
-
-;; ef-themes package (its worth it, if you want more choices)
-; (use-package ef-themes
-  ; :ensure t
-  ; :init
-  ; (ef-themes-take-over-modus-themes-mode 1)
-  ; :bind
-  ; (("<f5>" . modus-themes-rotate)
-   ; ("C-<f5>" . modus-themes-select)
-   ; ("M-<f5>" . modus-themes-load-random))
-  ; :config
-  ; ;; All customisations here.
-  ; (setq modus-themes-mixed-fonts t)
-  ; (setq modus-themes-italic-constructs t)
-  ; ;; Finally, load your theme of choice
-  ; (modus-themes-load-theme 'ef-kassio))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -211,17 +239,12 @@ If the new path's directories does not exist, create them."
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; UI/UX enhancements (Treemacs, minibuffer, autocompletion interfaces...)
 (load-file (expand-file-name "extras/base.el" user-emacs-directory))
-
-;; Org-mode configuration
 (load-file (expand-file-name "extras/org.el" user-emacs-directory))
-
-;; Dashboard, essential for looksmaxxing
 (load-file (expand-file-name "extras/dashboard.el" user-emacs-directory))
-
-;; Packages for software development (language-specific in subfiles)
 (load-file (expand-file-name "extras/dev.el" user-emacs-directory))
-
-;; Workspace setup
 (load-file (expand-file-name "extras/workspace.el" user-emacs-directory))
+
+(custom-set-variables
+ '(package-selected-packages nil))
+(custom-set-faces)
