@@ -93,6 +93,11 @@
               ("M-[" . paredit-wrap-square)
               ("M-{" . paredit-wrap-curly)))
 
+;Rebind RET (necessary cause of overwrite from Paredit in sly-mrepl-mode)
+(add-hook 'sly-mrepl-mode-hook
+          (lambda ()
+            (paredit-mode 1)
+            (define-key paredit-mode-map (kbd "RET") nil)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Highlight-Parentheses - Additional visual aid

@@ -35,6 +35,15 @@
 (when (display-graphic-p)
   (context-menu-mode))
 
+;; Bell only visual
+(setq ring-bell-function
+      (lambda ()
+        (let ((orig-fg (face-foreground 'mode-line)))
+          (set-face-foreground 'mode-line "#F2804F")
+          (run-with-idle-timer 0.1 nil
+                               (lambda (fg) (set-face-foreground 'mode-line fg))
+                               orig-fg))))
+
 ;; Don't litter file system with *~ backup files; put them all inside
 ;; ~/.emacs.d/backup or wherever
 (defun knoglerdev--backup-file-name (fpath)
@@ -232,6 +241,13 @@ If the new path's directories does not exist, create them."
 
 (add-to-list 'custom-theme-load-path (expand-file-name "themes/" user-emacs-directory))
 (load-theme 'nord t)
+
+(defun knoglerdev/fix-centaur-tabs-colors ()
+  (set-face-attribute 'header-line nil
+                      :background "#2E3440" :box nil :inherit nil)
+  (centaur-tabs-headline-match))
+
+(add-hook 'after-init-hook #'knoglerdev/fix-centaur-tabs-colors)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

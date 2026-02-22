@@ -83,7 +83,8 @@
               ([tab]     . corfu-next)
               ("S-TAB"   . corfu-previous)
               ([backtab] . corfu-previous)
-              ("RET"     . corfu-insert))
+              ("RET"     . corfu-insert)
+              )
   :init
   (global-corfu-mode)
   (corfu-history-mode)

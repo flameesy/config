@@ -50,7 +50,7 @@
             (switch-to-buffer eshell-buffer)
           (eshell)))
       
-      (window-resize bottom-window (- 20 (window-height bottom-window))))
+      (window-resize bottom-window (- 16 (window-height bottom-window))))
     
     (select-window main-window)))
 
@@ -90,11 +90,35 @@
   (interactive)
   (eshell t))
 
+(defun knoglerdev-move-eshell-to-bottom ()
+  "Move eshell to the bottom window, mirroring move-repl-to-bottom."
+  (interactive)
+  (when-let ((eshell-buffer (seq-find (lambda (buf)
+                                        (with-current-buffer buf
+                                          (derived-mode-p 'eshell-mode)))
+                                      (buffer-list))))
+    (let ((windows (window-list))
+          (bottom-left nil)
+          (max-top 0))
+      (dolist (win windows)
+        (let ((top (window-pixel-top win)))
+          (when (> top max-top)
+            (setq max-top top
+                  bottom-left win))))
+      (when bottom-left
+        (select-window bottom-left)
+        (switch-to-buffer eshell-buffer)))))
+
 (add-hook 'emacs-startup-hook #'knoglerdev-setup-workspace)
 
 (global-set-key (kbd "C-c w r") 'knoglerdev-setup-workspace)
 (global-set-key (kbd "C-c w t") 'knoglerdev-new-terminal)
 (global-set-key (kbd "C-c w s") 'knoglerdev-move-repl-to-bottom)
+(global-set-key (kbd "C-c w e") 'knoglerdev-move-eshell-to-bottom)
+(global-set-key (kbd "M-<left>")  'windmove-left)
+(global-set-key (kbd "M-<right>") 'windmove-right)
+(global-set-key (kbd "M-<up>")    'windmove-up)
+(global-set-key (kbd "M-<down>")  'windmove-down)
 
 ;; Workspace menu
 (with-eval-after-load 'menu-bar
@@ -111,6 +135,10 @@
   (define-key knoglerdev-workspace-menu [move-repl]
     '(menu-item "Move REPL to Bottom" knoglerdev-move-repl-to-bottom
                 :help "Move SLY REPL to bottom-right (C-c w s)"))
+
+  (define-key knoglerdev-workspace-menu [move-eshell]
+  '(menu-item "Move Eshell to Bottom" knoglerdev-move-eshell-to-bottom
+              :help "Move eshell to bottom window (C-c w e)"))
   
   (define-key knoglerdev-workspace-menu [separator-1] '(menu-item "--"))
   
